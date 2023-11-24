@@ -38,21 +38,20 @@ public class loginActivity extends AppCompatActivity {
 
         //TODO: checks authorization. for now we will just go to the next wireframe activity
         /** Check if username and password are correct (this is a basic example)
-        if (username.equals("your_username") && password.equals("your_password")) {
+        if (username.equals(username) && password.equals(password)) {
             // Login successful, you can navigate to the next screen or perform other actions
-            Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
+
         } else {
             // Login failed
-            Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
+
         }**/
 
 
-        goToActivity("valid");
+        goToMainMenu();
     }
 
-    public void goToActivity(String s){
+    public void goToMainMenu(){
         Intent intent= new Intent(this, MainMenu.class);
-        intent.putExtra("logged", s);
         startActivity(intent);
     }
 }
