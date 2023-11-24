@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import com.cs407.reservuw.databinding.ActivityMainBinding;
 import com.cs407.reservuw.databinding.ActivityMainMenuBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.io.*;
@@ -24,12 +23,15 @@ import android.os.Bundle;
 
 public class MainMenu extends AppCompatActivity {
 
-    //TODO: why is this one right and not "MainActivityBinding"
+    //TODO: why is this syntax one right and not "MainActivityBinding"?
     ActivityMainMenuBinding binding;
 
-    //TODO: look into why binding is prefered method
+    //TODO: Take notes why binding is prefered bottomNavBAr implementation method
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
+        Intent intent= getIntent();
+
+
         super.onCreate(savedInstanceState);
         binding = ActivityMainMenuBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

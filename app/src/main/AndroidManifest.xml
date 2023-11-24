@@ -24,7 +24,7 @@
             android:value="AIzaSyA16zHnssTmYHbA2HheEq1zwg8ZHILUp1A" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".loginActivity"
             android:exported="true" >
 
             <intent-filter>
