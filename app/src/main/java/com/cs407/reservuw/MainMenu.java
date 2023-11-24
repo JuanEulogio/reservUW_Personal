@@ -47,6 +47,7 @@ public class MainMenu extends AppCompatActivity {
                 return true;
             }else if(itemId== R.id.logout){
                 //go to logout and sign out user
+                goToLogin();
                 return true;
             }
             return true;
@@ -56,4 +57,12 @@ public class MainMenu extends AppCompatActivity {
     }
 
 
+    public void goToLogin(){
+        //TODO: erase user authentication
+
+        //
+
+        Intent intent= new Intent(this, loginActivity.class);
+        startActivity(intent);
+    }
 }
