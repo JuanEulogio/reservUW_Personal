@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".reservationConfirmed"
+    android:layout_margin="30dp">
+
+    <TextView
+        android:id="@+id/confirmedMsg_textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="30dp"
+        android:fontFamily= "sans-serif-black"
+        android:text="Reservation Confirmed!"
+        android:textColor="@color/UWcolor"/>
+
+    <TextView
+        android:id="@+id/reservationLocation_textView"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="20dp"
+        android:background="@drawable/textbox"
+        android:layout_marginVertical="25dp"
+        android:padding="10dp"
+        android:text="[input room][input time][input date]" />
+
+    <TextView
+        android:id="@+id/reservationNotification_textView"
+        android:layout_width="match_parent"
+        android:textSize="15dp"
+        android:fontFamily="sans-serif-medium"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="20dp"
+        android:text="We will notify you 30 minutes before hand" />
+
+
+
+    <FrameLayout
+        android:layout_width="400dp"
+        android:layout_height="370dp">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentContainerView"
+            android:name="com.cs407.reservuw.MapsFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout="@layout/fragment_maps" />
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/closeConfirmation_button"
+        android:layout_gravity="right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Close"
+        android:backgroundTint="@color/UWcolor"/>
+
+</LinearLayout>

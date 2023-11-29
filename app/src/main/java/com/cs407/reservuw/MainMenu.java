@@ -23,6 +23,8 @@ import android.os.Bundle;
 
 public class MainMenu extends AppCompatActivity {
 
+
+
     //TODO: why is this syntax one right and not "MainActivityBinding"?
     ActivityMainMenuBinding binding;
 
