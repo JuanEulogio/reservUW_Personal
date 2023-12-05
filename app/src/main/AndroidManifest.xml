@@ -21,6 +21,9 @@
         <activity
             android:name=".MainMenu"
             android:exported="false"></activity>
+        <activity
+            android:name=".favorite"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

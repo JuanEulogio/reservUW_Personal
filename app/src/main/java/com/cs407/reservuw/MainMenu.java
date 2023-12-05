@@ -43,6 +43,7 @@ public class MainMenu extends AppCompatActivity {
             int itemId = item.getItemId();
             if(itemId== R.id.favorites){
                 //go to favorites pg
+                goToFav();
                 return true;
             } else if (itemId== R.id.reserves) {
                 //go to reserve list
@@ -58,6 +59,10 @@ public class MainMenu extends AppCompatActivity {
 
     }
 
+    public void goToFav() {
+        Intent intent2 = new Intent(this, favorite.class);
+        startActivity(intent2);
+    }
 
     public void goToLogin(){
         //TODO: erase user authentication

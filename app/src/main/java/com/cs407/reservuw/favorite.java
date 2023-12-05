@@ -27,7 +27,17 @@ public class favorite extends AppCompatActivity {
         items.add(new item("3029","College Library"));
         items.add(new item("4029","College Library"));
         items.add(new item("5029","College Library"));
-        items.add(new item("15","Steenberk Library"));
+        items.add(new item("15","Steenbock Library"));
+        items.add(new item("17B","Union South"));
+        items.add(new item("2029","College Library"));
+        items.add(new item("2028","College Library"));
+        items.add(new item("2026","College Library"));
+        items.add(new item("2025","College Library"));
+        items.add(new item("3029","College Library"));
+        items.add(new item("3029","College Library"));
+        items.add(new item("4029","College Library"));
+        items.add(new item("5029","College Library"));
+        items.add(new item("15","Steenbock Library"));
         items.add(new item("17B","Union South"));
 
 
