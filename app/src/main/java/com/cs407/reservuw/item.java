@@ -4,7 +4,7 @@ public class item {
     String building;
     String roomNum;
 
-    public item(String building, String roomNum) {
+    public item(String roomNum, String building) {
         this.building = building;
         this.roomNum = roomNum;
     }
