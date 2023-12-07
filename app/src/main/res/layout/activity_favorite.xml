@@ -8,10 +8,21 @@
     android:layout_height="match_parent"
     tools:context=".favorite">
 
+    <TextView
+        android:id="@+id/favorite_rooms_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="30dp"
+        android:fontFamily= "sans-serif-black"
+        android:text="Favorite Rooms"
+        android:textColor="@color/UWcolor"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/recyclerView"/>
+        android:id="@+id/recyclerView"
+        android:layout_below="@id/favorite_rooms_text"/>
 
 
 </RelativeLayout>
