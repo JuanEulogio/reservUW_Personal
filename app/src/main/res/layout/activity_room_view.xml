@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".roomView">
+
+    <TextView
+        android:id="@+id/room_view_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-black"
+        android:gravity="center"
+        android:text="Room View"
+        android:textColor="@color/UWcolor"
+        android:textSize="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/roomImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/room_view_title" />
+
+    <TextView
+        android:id="@+id/boxedTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/textbox"
+        android:padding="16dp"
+        android:text="Info of the Room"
+        android:textColor="#000000"
+        app:layout_constraintTop_toBottomOf="@id/roomImage" />
+
+    <Button
+        android:id="@+id/cancelButton"
+        android:layout_width="180dp"
+        android:layout_height="47dp"
+        android:layout_marginEnd="8dp"
+        android:text="Cancel"
+        app:layout_constraintTop_toBottomOf="@+id/boxedTextView"
+        app:layout_constraintEnd_toStartOf="@id/reserveButton" />
+
+    <Button
+        android:id="@+id/reserveButton"
+        android:layout_width="180dp"
+        android:layout_height="47dp"
+        android:text="Reserve"
+        app:layout_constraintTop_toBottomOf="@+id/boxedTextView"
+        app:layout_constraintStart_toEndOf="@id/cancelButton" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

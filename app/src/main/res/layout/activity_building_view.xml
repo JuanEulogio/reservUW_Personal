@@ -7,10 +7,21 @@
     android:layout_height="match_parent"
     tools:context=".buildingView">
 
+    <TextView
+        android:id="@+id/building_view_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="30dp"
+        android:fontFamily= "sans-serif-black"
+        android:text="Building View"
+        android:textColor="@color/UWcolor"/>
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/buildingImageView"
+        android:layout_below="@id/building_view_title"
         />
 
     <androidx.recyclerview.widget.RecyclerView

@@ -9,7 +9,7 @@
     tools:context=".favorite">
 
     <TextView
-        android:id="@+id/favorite_rooms_text"
+        android:id="@+id/favorite_rooms_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/recyclerView"
-        android:layout_below="@id/favorite_rooms_text"/>
+        android:layout_below="@id/favorite_rooms_title"/>
 
 
 </RelativeLayout>
