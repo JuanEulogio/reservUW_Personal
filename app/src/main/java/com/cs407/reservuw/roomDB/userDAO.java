@@ -13,9 +13,8 @@ public interface userDAO {
             "password LIKE :password LIMIT 1")
     User findByUser(String email, String password);
 
-    @Insert
-    void insertAll(User... users);
 
-    @Delete
-    void delete(User user);
+    @Insert
+    void insertUser(User user);
+
 }
