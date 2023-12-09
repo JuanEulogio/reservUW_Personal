@@ -99,6 +99,7 @@ public class MainMenu extends AppCompatActivity implements OnMapReadyCallback {
         Places.initialize(getApplicationContext(), "AIzaSyA16zHnssTmYHbA2HheEq1zwg8ZHILUp1A");
         placesClient = Places.createClient(this);
 
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -126,12 +127,17 @@ public class MainMenu extends AppCompatActivity implements OnMapReadyCallback {
                     overridePendingTransition(0, 0);
                 }
                         return true;
+
             }
         });
 
 
     }
 
+    public void goToFav() {
+        Intent intent2 = new Intent(this, favorite.class);
+        startActivity(intent2);
+    }
 
 
     public void goToLogin(){
