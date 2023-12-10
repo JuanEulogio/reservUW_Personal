@@ -2,11 +2,9 @@ package com.cs407.reservuw;
 
 import static android.content.ContentValues.TAG;
 
-import static com.google.android.material.internal.ContextUtils.getActivity;
-
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -15,88 +13,90 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import com.cs407.reservuw.databinding.ActivityMainMenuBinding;
-import com.cs407.reservuw.roomDB.uwRoomDatabase;
+
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.PlaceLikelihood;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
+import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import java.io.*;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import android.content.Intent;
-import android.os.Bundle;
-import android.view.MenuItem;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
-import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.databinding.DataBindingUtil;
-import androidx.databinding.ViewDataBinding;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import android.os.Bundle;
+
 import com.google.android.gms.maps.SupportMapFragment;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Room;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 
-public class MainMenu extends AppCompatActivity implements OnMapReadyCallback {
+public class MainMenu extends AppCompatActivity implements GoogleMap.OnMarkerClickListener, OnMapReadyCallback {
 
 
 
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1; // could've been any number!
 
     private FusedLocationProviderClient fusedLocationClient;
-    private LocationCallback locationCallback;
 
     private GoogleMap mMap;
 
     private Location lastKnownLocation;
+    private CameraPosition cameraPosition;
 
 
     // The entry point to the Places API.
     private PlacesClient placesClient;
 
-    //TODO: daatabase
+    //TODO: set database?
     //uwRoomDatabase db = Room.databaseBuilder(this, uwRoomDatabase.class, "uwRoomDatabase").build();
 
     //grant permission
     private boolean locationPermissionGranted;
 
-    private final LatLng uwMadisonLocation = new LatLng(43.075404393142115, -89.40341145630344);
+    private final LatLng defaultLocation = new LatLng(43.075404393142115, -89.40341145630344);
 
-    //TODO: why is this syntax one right and not "MainActivityBinding"?
-    //ActivityMainMenuBinding binding;
 
-    //TODO: Take notes why binding is prefered bottomNavBAr implementation method
+    //saving the map state
+    private static final String KEY_CAMERA_POSITION = "camera_position";
+    private static final String KEY_LOCATION = "location";
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         Intent intent= getIntent();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
+        // Retrieve location and camera position from saved instance state.
+        if (savedInstanceState != null) {
+            lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
+            cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
+        }
+
         // Construct a PlacesClient
-        Places.initialize(getApplicationContext(), "AIzaSyA16zHnssTmYHbA2HheEq1zwg8ZHILUp1A");
+        Places.initialize(getApplicationContext(), "AIzaSyDYnEriKHXVSo50g7c_XJ7QlN3TjooL0QM");
         placesClient = Places.createClient(this);
 
 
@@ -122,8 +122,6 @@ public class MainMenu extends AppCompatActivity implements OnMapReadyCallback {
 
                 }else if(item.getItemId() == R.id.logout){
                     goToLogin();
-
-                    //TODO: optional: add and learn animation id if time permits
                     overridePendingTransition(0, 0);
                 }
                         return true;
@@ -141,9 +139,8 @@ public class MainMenu extends AppCompatActivity implements OnMapReadyCallback {
 
 
     public void goToLogin(){
-        //TODO: erase user authentication
+        //TODO: erase user session
 
-        //
         startActivity(new Intent(getApplicationContext(), loginActivity.class));
     }
 
@@ -154,13 +151,14 @@ public class MainMenu extends AppCompatActivity implements OnMapReadyCallback {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-
-
         // Turn on the My Location layer and the related control on the map.
         updateLocationUI();
 
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
+
+        //places API
+        showCurrentPlace();
     }
 
     private void getLocationPermission() {
@@ -248,7 +246,7 @@ public class MainMenu extends AppCompatActivity implements OnMapReadyCallback {
                             Log.d(TAG, "Current location is null. Using defaults.");
                             Log.e(TAG, "Exception: %s", task.getException());
                             mMap.moveCamera(CameraUpdateFactory
-                                    .newLatLngZoom(uwMadisonLocation, 15));
+                                    .newLatLngZoom(defaultLocation, 15));
                             mMap.getUiSettings().setMyLocationButtonEnabled(false);
                         }
                     }
@@ -257,6 +255,102 @@ public class MainMenu extends AppCompatActivity implements OnMapReadyCallback {
         } catch (SecurityException e)  {
             Log.e("Exception: %s", e.getMessage(), e);
         }
+    }
+
+
+    //Places API implementation for buildings marker and info
+    private void showCurrentPlace() {
+        if (mMap == null) {
+            return;
+        }
+
+
+        // Define the Places ID
+        Resources res = getResources();
+        final String[] placesID = res.getStringArray(R.array.buildingPlacesID);
+
+
+        //make a arr of placeFields
+        // Specify the fields to return.
+        List<List<Place.Field>> placeFields = new ArrayList<List<Place.Field>>(placesID.length);
+        for(int i=0; i< placesID.length; i++){
+            placeFields.add(Arrays.asList(Place.Field.LAT_LNG , Place.Field.NAME));
+            //placeFields.set(i, Arrays.asList(Place.Field.LAT_LNG , Place.Field.NAME));
+        }
+
+
+        //make a arr of requests
+        // Construct a request object, passing the place ID and fields array.
+        final FetchPlaceRequest[] requests = new FetchPlaceRequest[placesID.length];
+        for(int i=0; i< placesID.length; i++){
+            requests[i]= FetchPlaceRequest.newInstance(placesID[i], placeFields.get(i));
+        }
+
+
+
+        //get our places and place marker
+
+        //make marker of array. used to set our markers tag= placeID
+        Marker marker[] = new Marker[placesID.length];
+        for(int i=0; i< placesID.length; i++){
+            int finalI = i;
+            placesClient.fetchPlace(requests[i]).addOnSuccessListener((response) -> {
+                Place place = response.getPlace();
+                Log.i(TAG, "Place found: " + place.getName());
+
+                //add marker to building
+                marker[finalI] = mMap.addMarker(new MarkerOptions().position(place.getLatLng())
+                        .icon(bitmapDescriptorFromVector(getApplicationContext(), R.drawable.ic_building_location))
+                        .title(place.getName()));
+                marker[finalI].setTag(placesID[finalI]);
+
+                mMap.setOnMarkerClickListener(this);
+
+
+            }).addOnFailureListener((exception) -> {
+                if (exception instanceof ApiException) {
+                    final ApiException apiException = (ApiException) exception;
+                    Log.e(TAG, "Place not found: " + exception.getMessage());
+                    final int statusCode = apiException.getStatusCode();
+                    // TODO: Handle error with given status code.
+                }
+            });
+        }
+    }
+
+
+
+    /** Called when the user clicks a marker. */
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+        // Retrieve the data from the marker.
+        String placeID = (String) marker.getTag();
+        Log.i(TAG, "Place clicked: " + placeID);
+        // if the thing clicked wasnt a building (the user)
+        if(placeID== null) return false;
+
+
+        //TODO: go to Building view. choose building via buildings places ID
+        //Intent intent= new Intent(this, BuildingView.class);
+        //intent.putExtra("ID", placeID);
+        //startActivity(intent);
+
+        // Return false to indicate that we have not consumed the event and that we wish
+        // for the default behavior to occur (which is for the camera to move such that the
+        // marker is centered and for the marker's info window to open, if it has one).
+        return false;
+    }
+
+
+
+    //save the map state when the activity pauses
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (mMap != null) {
+            outState.putParcelable(KEY_CAMERA_POSITION, mMap.getCameraPosition());
+            outState.putParcelable(KEY_LOCATION, lastKnownLocation);
+        }
+        super.onSaveInstanceState(outState);
     }
 
 
