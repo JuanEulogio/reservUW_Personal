@@ -16,6 +16,9 @@
         android:theme="@style/Theme.ReservUW"
         tools:targetApi="31">
         <activity
+            android:name=".myReserve"
+            android:exported="false" />
+        <activity
             android:name=".roomView"
             android:exported="false" />
         <activity
