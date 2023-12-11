@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -27,6 +30,7 @@
         <activity
             android:name=".reservationConfirmed"
             android:exported="false" />
+
         <activity
             android:name=".MainMenu"
             android:exported="false" />
@@ -36,7 +40,13 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyA16zHnssTmYHbA2HheEq1zwg8ZHILUp1A" />
+            android:value="AIzaSyDYnEriKHXVSo50g7c_XJ7QlN3TjooL0QM" />
+
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"/>
+
 
         <activity
             android:name=".loginActivity"
