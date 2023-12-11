@@ -9,33 +9,29 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class BuildingAdapter extends RecyclerView.Adapter<BuildingViewHolder> {
+public class MyReserveAdapter extends RecyclerView.Adapter<MyReserveViewHolder> {
 
     Context context;
     List<item> items;
 
-    public BuildingAdapter(Context context, List<item> items) {
+    public MyReserveAdapter(Context context, List<item> items) {
         this.context = context;
         this.items = items;
     }
 
     @NonNull
     @Override
-    public BuildingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new BuildingViewHolder(LayoutInflater.from(context).inflate(R.layout.item_view,parent,false));
+    public MyReserveViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new MyReserveViewHolder(LayoutInflater.from(context).inflate(R.layout.item_view,parent,false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull BuildingViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyReserveViewHolder holder, int position) {
         holder.roomNumView.setText(items.get(position).getRoomNum());
     }
 
     @Override
     public int getItemCount() {
         return items.size();
-    }
-
-    public interface OnItemClickListener{
-        void onItemClick(item clickedItem);
     }
 }

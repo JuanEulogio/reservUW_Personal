@@ -137,6 +137,10 @@ public class MainMenu extends AppCompatActivity implements GoogleMap.OnMarkerCli
         startActivity(intent2);
     }
 
+    public void goToMyres() {
+        Intent intent3 = new Intent(this, myReserve.class);
+        startActivity(intent3);
+    }
 
     public void goToLogin(){
         //TODO: erase user session
