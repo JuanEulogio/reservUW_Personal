@@ -47,6 +47,7 @@ public class MainMenu extends AppCompatActivity {
                 return true;
             } else if (itemId== R.id.reserves) {
                 //go to reserve list
+                goToMyres();
                 return true;
             }else if(itemId== R.id.logout){
                 //go to logout and sign out user
@@ -63,6 +64,12 @@ public class MainMenu extends AppCompatActivity {
         Intent intent2 = new Intent(this, favorite.class);
         startActivity(intent2);
     }
+
+    public void goToMyres() {
+        Intent intent3 = new Intent(this, myReserve.class);
+        startActivity(intent3);
+    }
+
 
     public void goToLogin(){
         //TODO: erase user authentication

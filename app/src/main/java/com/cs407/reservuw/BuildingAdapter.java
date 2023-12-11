@@ -34,4 +34,8 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingViewHolder> {
     public int getItemCount() {
         return items.size();
     }
+
+    public interface OnItemClickListener{
+        void onItemClick(item clickedItem);
+    }
 }
