@@ -70,8 +70,6 @@ public class MainMenu extends AppCompatActivity implements GoogleMap.OnMarkerCli
     // The entry point to the Places API.
     private PlacesClient placesClient;
 
-    //TODO: set database?
-    //uwRoomDatabase db = Room.databaseBuilder(this, uwRoomDatabase.class, "uwRoomDatabase").build();
 
     //grant permission
     private boolean locationPermissionGranted;
@@ -117,7 +115,7 @@ public class MainMenu extends AppCompatActivity implements GoogleMap.OnMarkerCli
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
                 if(item.getItemId() == R.id.favorites) {
-
+                    goToFav();
                 }else if(item.getItemId() == R.id.reserves){
 
                 }else if(item.getItemId() == R.id.logout){
@@ -128,6 +126,7 @@ public class MainMenu extends AppCompatActivity implements GoogleMap.OnMarkerCli
 
             }
         });
+
 
 
     }
@@ -316,7 +315,8 @@ public class MainMenu extends AppCompatActivity implements GoogleMap.OnMarkerCli
                     final ApiException apiException = (ApiException) exception;
                     Log.e(TAG, "Place not found: " + exception.getMessage());
                     final int statusCode = apiException.getStatusCode();
-                    // TODO: Handle error with given status code.
+
+                    //NOTE: here Handle error with given status code.
                 }
             });
         }
