@@ -19,7 +19,6 @@ public class reservationConfirmed extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent= new Intent(reservationConfirmed.this, MainMenu.class);
-                intent.putExtra("view", "main");
                 startActivity(intent);
             }
         });
