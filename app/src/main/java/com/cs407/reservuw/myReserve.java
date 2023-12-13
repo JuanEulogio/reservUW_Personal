@@ -21,8 +21,8 @@ public class myReserve extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.reservedRecyclerView);
 
         List<item> items = new ArrayList<>();
-        items.add(new item("2029","College Library"));
-        items.add(new item("2028","College Library"));
+        items.add(new item("2029","College Library", 1245));
+        items.add(new item("2028","College Library", 1468709));
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new MyReserveAdapter(getApplicationContext(), items));

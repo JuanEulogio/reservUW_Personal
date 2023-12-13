@@ -3,6 +3,7 @@ package com.cs407.reservuw;
 import static android.content.ContentValues.TAG;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,7 +35,6 @@ public class favorite extends AppCompatActivity {
         SharedPreferences sharedPreferences =
                 getSharedPreferences ("com.cs407.reservuw", Context.MODE_PRIVATE);
 
-        Log.i(TAG, "got sharedPreference");
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
 
@@ -47,9 +47,7 @@ public class favorite extends AppCompatActivity {
 
         int uid = sharedPreferences.getInt ("uid", -1);
 
-        Log.i(TAG, "right before getRoomsByBuilding(uid)" + Integer.toString(uid));
         List<Integer> favRoomId = favoriteDAO.getRoomsByBuilding(uid);
-        Log.i(TAG, "got getRoomsByBuilding(uid)");
         LiveData<List<Rooms>> roomsByRoomId = myRoomDAO.getRoomsByRoomID(favRoomId.toString());
 
 
@@ -58,7 +56,7 @@ public class favorite extends AppCompatActivity {
             if (rooms != null) {
                 for (Rooms room : rooms) {
                     Log.d(TAG, "Building: " + room.getBuilding() + ", Room Number: " + room.getRoomNumber());
-                    items.add(new item(Integer.toString(room.getRoomNumber()), room.getBuilding()));
+                    items.add(new item(Integer.toString(room.getRoomNumber()), room.getBuilding(), room.getUid()));
                 }
             } else {
                 Log.d(TAG, "Rooms are null");
@@ -66,13 +64,29 @@ public class favorite extends AppCompatActivity {
 
             // Set up RecyclerView after fetching data
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.setAdapter(new BuildingAdapter(getApplicationContext(), items));
+            BuildingAdapter adapter = new BuildingAdapter(getApplicationContext(), items);
+            recyclerView.setAdapter(adapter);
 
             ImageButton backButton = findViewById(R.id.backButton);
             backButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     finish();
+                }
+            });
+
+            adapter.setOnItemClickListener(new BuildingAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(item item) {
+                    // Handle item click here
+                    // Example: You can open a new activity or perform any action
+                    // based on the clicked item.
+                    // Access item details like item.getRoomNumber(), item.getPlaceName(), etc.
+                    Intent intent = new Intent(getApplicationContext(), roomView.class);
+                    intent.putExtra("roomNum", item.getRoomNum());
+                    intent.putExtra("buildingName", item.getBuilding());
+                    intent.putExtra("roomUID", item.getRoomUID());
+                    startActivity(intent);
                 }
             });
         });
