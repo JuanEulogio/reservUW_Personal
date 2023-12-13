@@ -25,7 +25,7 @@ public class myReserve extends AppCompatActivity {
         items.add(new item("2028","College Library",2));
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new BuildingAdapter(getApplicationContext(), items));
+        recyclerView.setAdapter(new MyReserveAdapter(getApplicationContext(), items));
 
         ImageButton backButton = findViewById(R.id.backButton);
         backButton.setOnClickListener(new View.OnClickListener() {

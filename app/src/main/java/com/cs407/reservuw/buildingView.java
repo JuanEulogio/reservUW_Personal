@@ -26,6 +26,7 @@ import java.util.List;
 public class buildingView extends AppCompatActivity {
 
     private PlacesClient placesClient;
+    private String buildingName;
 
 
 
@@ -59,10 +60,6 @@ public class buildingView extends AppCompatActivity {
                 // NOTE: Handle error with given status code.
             }
         });
-
-
-
-
 
         List<item> items = new ArrayList<>();
         items.add(new item("2029","College Library",1));

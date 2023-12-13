@@ -7,6 +7,9 @@ import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
+
+import com.cs407.reservuw.roomDB.uwRoomDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +22,7 @@ public class favorite extends AppCompatActivity {
         setContentView(R.layout.activity_favorite);
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
+
 
         List<item> items = new ArrayList<>();
         items.add(new item("2029","College Library",1));
