@@ -39,6 +39,7 @@ public class favorite extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
 
         uwRoomDatabase myDatabase = Room.databaseBuilder(getApplicationContext(), uwRoomDatabase.class, "my room database")
+                .allowMainThreadQueries()
                 .build();
 
         FavoriteRoomDAO favoriteDAO = myDatabase.FavoriteRoomDAO();
