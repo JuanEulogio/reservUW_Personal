@@ -2,6 +2,7 @@ package com.cs407.reservuw.roomDB;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import java.time.LocalDateTime;
 
@@ -20,6 +21,8 @@ public class Reservations {
     //NOTE: when user gets the time it should only be in hours.
     @ColumnInfo
     public LocalDateTime dateTime;
+
+
 
 
     public Reservations(int uid, int USER_uid, String ROOM_uid, LocalDateTime dateTime) {

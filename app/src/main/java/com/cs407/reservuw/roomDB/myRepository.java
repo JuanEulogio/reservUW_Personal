@@ -1,3 +1,4 @@
+/**
 package com.cs407.reservuw.roomDB;
 
 import android.app.Application;
@@ -33,8 +34,8 @@ class myRepository {
 
 
         //TODO: way to solve? has parameter and dont know how to handle that here
-        //getRoomsByBuilding = roomDAO.getRoomsByBuilding();
-        //getReservationByUser = reservationDAO.getReservationByUser();
+        getRoomsByBuilding = roomDAO.getRoomsByBuilding();
+        getReservationByUser = reservationDAO.getReservationByUser();
         //getRoomReservationByDate = reservationDAO.getRoomReservationByDate();
     }
 
@@ -68,3 +69,4 @@ class myRepository {
         });
     }
 }
+ **/

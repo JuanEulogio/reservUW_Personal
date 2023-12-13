@@ -2,9 +2,9 @@ package com.cs407.reservuw.roomDB;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
@@ -20,26 +20,17 @@ public class User {
     public String password;
 
 
-    //TODO: finish this implemention
-    //@ColumnInfo
-    //public List<Rooms> favoriteRooms;
-
 
     public User(int uid, String email, String password) {
-        //, List<Rooms> favoriteRooms
         this.uid = uid;
         this.email = email;
         this.password  = password;
-        //this.favoriteRooms= favoriteRooms;
     }
 
-    //used to get users favorite rooms.
-    //TODO: if we get this, we should be able to freely edit with it and the changes are reflected
-    // in here as well. just say arrlist= getFavoriteRooms()
-    // set= get our list, and add the room to it
-    //public List<Rooms> getFavoriteRooms() {
-        //return favoriteRooms;
-    //}
+    public User getUser(){
+        return this;
+    }
+
 
 
     public int getUid() {
