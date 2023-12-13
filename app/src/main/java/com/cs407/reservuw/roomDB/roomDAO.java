@@ -25,5 +25,4 @@ public interface roomDAO {
     LiveData<List<Rooms>> getRoomsByRoomID(List<Integer> roomID);
 
 
-
 }
