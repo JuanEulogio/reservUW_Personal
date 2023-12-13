@@ -104,6 +104,7 @@ public class loginActivity extends AppCompatActivity {
             User newUser = new User(0, username, password);
             myDatabase.userDAO().insertUser(newUser);
 
+            Log.i(TAG, "new user. new uid: " + myDatabase.userDAO().findByUser(username, password).getUid());
 
             Intent intent = new Intent(this, MainMenu.class);
             intent.putExtra("uid", newUser.getUid());
