@@ -11,7 +11,9 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -43,6 +45,19 @@ public class loginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences sharedPreferences =
+                getSharedPreferences ("com.cs407.reservuw", Context.MODE_PRIVATE);
+
+        if (sharedPreferences.getInt ( "uid", -1) != -1) {
+            // Implies that the uid exists in SharedPreferences. The user did not log out when closing
+            // the application
+            Intent intent = new Intent(this, MainMenu.class);
+            intent.putExtra("uid", sharedPreferences.getInt("uid", -1));
+            startActivity(intent);
+        }
+
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
 
@@ -96,7 +111,6 @@ public class loginActivity extends AppCompatActivity {
 
 
         }else{
-
 
             //user exist and no need to create user
             Log.i(TAG, "user exist: " + user.getUid());

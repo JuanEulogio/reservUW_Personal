@@ -1,8 +1,10 @@
 package com.cs407.reservuw;
 
+import static android.app.PendingIntent.getActivity;
 import static android.content.ContentValues.TAG;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -83,7 +85,18 @@ public class MainMenu extends AppCompatActivity implements GoogleMap.OnMarkerCli
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
+        //gets login uid to make shared preference
         Intent intent= getIntent();
+        int userID= intent.getIntExtra("uid", -1);
+
+        SharedPreferences sharedPreferences = getSharedPreferences ("com.cs407.reservuw", MODE_PRIVATE);
+
+        if(sharedPreferences.getInt ( "uid", -1) == -1){
+            sharedPreferences.edit() .putInt("uid", userID).apply();
+        }
+
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
@@ -140,7 +153,10 @@ public class MainMenu extends AppCompatActivity implements GoogleMap.OnMarkerCli
     }
 
     public void goToLogin(){
-        //TODO: erase user session
+        //erase user session
+        SharedPreferences sharedPreferences =
+                getSharedPreferences ("com.cs407.reservuw", Context.MODE_PRIVATE);
+        sharedPreferences.edit().clear().apply();
 
         startActivity(new Intent(getApplicationContext(), loginActivity.class));
     }

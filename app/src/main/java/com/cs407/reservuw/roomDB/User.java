@@ -6,8 +6,6 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 
-import java.util.List;
-
 @Entity
 public class User {
     @PrimaryKey(autoGenerate = true)
