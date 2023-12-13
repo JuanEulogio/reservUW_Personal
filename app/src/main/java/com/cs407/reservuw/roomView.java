@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 public class roomView extends AppCompatActivity {
 
@@ -16,21 +17,28 @@ public class roomView extends AppCompatActivity {
 
         Button cancelButton = findViewById(R.id.cancelButton);
         Button reserveButton = findViewById(R.id.reserveButton);
+        ImageButton backButton = findViewById(R.id.backButton);
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent cancelIntent = new Intent(MainMenu.this, MainMenu.class);
-//                startActivity(cancelIntent);
+                startActivity(new Intent(getApplicationContext(), MainMenu.class));
             }
         });
 
         reserveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent reserveIntent = new Intent(MainMenu.this, reservationConfirmed.class);
-//                startActivity(reserveIntent);
+                startActivity(new Intent(getApplicationContext(), MainMenu.class));
                 // modify/add the room to the reserved room array
+            }
+        });
+
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }

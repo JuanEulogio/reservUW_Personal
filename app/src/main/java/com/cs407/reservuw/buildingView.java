@@ -1,15 +1,33 @@
 package com.cs407.reservuw;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TextView;
+
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.PlacesClient;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class buildingView extends AppCompatActivity {
+
+    private PlacesClient placesClient;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,6 +35,34 @@ public class buildingView extends AppCompatActivity {
         setContentView(R.layout.activity_building_view);
 
         RecyclerView recyclerView = findViewById(R.id.buildingRecyclerView);
+
+        TextView buildingViewTitle = findViewById(R.id.building_view_title);
+
+        placesClient = Places.createClient(this);
+
+        Intent receivedIntent = getIntent();
+        final String placeId = receivedIntent.getStringExtra("ID");
+
+        final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+
+        final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
+
+        placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+            Place place = response.getPlace();
+            Log.i(TAG, "Place found: " + place.getName());
+            buildingViewTitle.setText(place.getName());
+        }).addOnFailureListener((exception) ->{
+            if (exception instanceof ApiException) {
+                final ApiException apiException = (ApiException) exception;
+                Log.e(TAG, "Place not found: " + exception.getMessage());
+                final int statusCode = apiException.getStatusCode();
+                // NOTE: Handle error with given status code.
+            }
+        });
+
+
+
+
 
         List<item> items = new ArrayList<>();
         items.add(new item("2029","College Library",1));
@@ -30,5 +76,15 @@ public class buildingView extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new BuildingAdapter(getApplicationContext(), items));
+
+        ImageButton backButton = findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
+
+
 }

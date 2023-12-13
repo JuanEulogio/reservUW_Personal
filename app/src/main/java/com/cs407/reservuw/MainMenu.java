@@ -117,7 +117,7 @@ public class MainMenu extends AppCompatActivity implements GoogleMap.OnMarkerCli
                 if(item.getItemId() == R.id.favorites) {
                     goToFav();
                 }else if(item.getItemId() == R.id.reserves){
-
+                    goToMyRes();
                 }else if(item.getItemId() == R.id.logout){
                     goToLogin();
                     overridePendingTransition(0, 0);
@@ -132,13 +132,11 @@ public class MainMenu extends AppCompatActivity implements GoogleMap.OnMarkerCli
     }
 
     public void goToFav() {
-        Intent intent2 = new Intent(this, favorite.class);
-        startActivity(intent2);
+        startActivity(new Intent(getApplicationContext(), favorite.class));
     }
 
-    public void goToMyres() {
-        Intent intent3 = new Intent(this, myReserve.class);
-        startActivity(intent3);
+    public void goToMyRes() {
+        startActivity(new Intent(getApplicationContext(), myReserve.class));
     }
 
     public void goToLogin(){
@@ -335,9 +333,9 @@ public class MainMenu extends AppCompatActivity implements GoogleMap.OnMarkerCli
 
 
         //TODO: go to Building view. choose building via buildings places ID
-        //Intent intent= new Intent(this, BuildingView.class);
-        //intent.putExtra("ID", placeID);
-        //startActivity(intent);
+        Intent intent= new Intent(this, buildingView.class);
+        intent.putExtra("ID", placeID);
+        startActivity(intent);
 
         // Return false to indicate that we have not consumed the event and that we wish
         // for the default behavior to occur (which is for the camera to move such that the
@@ -371,3 +369,6 @@ public class MainMenu extends AppCompatActivity implements GoogleMap.OnMarkerCli
     }
 
 }
+
+
+

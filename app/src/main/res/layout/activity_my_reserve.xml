@@ -23,5 +23,17 @@
         android:id="@+id/reservedRecyclerView"
         android:layout_below="@id/reserved_rooms_title"/>
 
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="32dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="3dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_back_arrow"
+        android:clickable="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
 </RelativeLayout>
