@@ -41,7 +41,10 @@ public class roomView extends AppCompatActivity {
         reserveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), reservationConfirmed.class));
+                Intent intent = new Intent(getApplicationContext(), reservationConfirmed.class);
+                intent.putExtra("roomNum", roomNum);
+                intent.putExtra("buildingName", buildingName);
+                startActivity(intent);
                 // modify/add the room to the reserved room array
             }
         });

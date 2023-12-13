@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class reservationConfirmed extends AppCompatActivity {
 
@@ -13,6 +14,13 @@ public class reservationConfirmed extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reservation_confirmed);
+
+        Intent receivedIntent = getIntent();
+        String roomNum = receivedIntent.getStringExtra("roomNum");
+        String buildingName = receivedIntent.getStringExtra("buildingName");
+        TextView reservationLocation = findViewById(R.id.reservationLocation_textView);
+
+        reservationLocation.setText(roomNum + ", " + buildingName);
 
         Button closeButton= findViewById(R.id.closeConfirmation_button);
         closeButton.setOnClickListener(new View.OnClickListener() {
