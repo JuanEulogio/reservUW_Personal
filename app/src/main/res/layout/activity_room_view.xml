@@ -18,12 +18,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/roomImage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/room_view_title" />
-
     <TextView
         android:id="@+id/boxedTextView"
         android:layout_width="match_parent"
@@ -32,7 +26,7 @@
         android:padding="16dp"
         android:text="Info of the Room"
         android:textColor="#000000"
-        app:layout_constraintTop_toBottomOf="@id/roomImage" />
+        app:layout_constraintTop_toBottomOf="@id/room_view_title" />
 
     <Button
         android:id="@+id/cancelButton"

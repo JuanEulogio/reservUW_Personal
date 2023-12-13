@@ -108,6 +108,7 @@ public class loginActivity extends AppCompatActivity {
 
             Intent intent = new Intent(this, MainMenu.class);
             intent.putExtra("uid", newUser.getUid());
+            Log.i(TAG, "new user: " + newUser.getUid());
             startActivity(intent);
 
 

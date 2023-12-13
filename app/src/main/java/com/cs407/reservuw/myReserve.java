@@ -21,11 +21,11 @@ public class myReserve extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.reservedRecyclerView);
 
         List<item> items = new ArrayList<>();
-        items.add(new item("2029","College Library",1));
-        items.add(new item("2028","College Library",2));
+        items.add(new item("2029","College Library"));
+        items.add(new item("2028","College Library"));
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new BuildingAdapter(getApplicationContext(), items));
+        recyclerView.setAdapter(new MyReserveAdapter(getApplicationContext(), items));
 
         ImageButton backButton = findViewById(R.id.backButton);
         backButton.setOnClickListener(new View.OnClickListener() {

@@ -14,8 +14,6 @@ public interface reservationDAO {
     @Insert
     void insertReservation(Reservations reservations);
 
-
-    /**
      * used in reservation activity
      */
     @Query("SELECT * FROM reservations WHERE USER_uid LIKE :USER_uid")
