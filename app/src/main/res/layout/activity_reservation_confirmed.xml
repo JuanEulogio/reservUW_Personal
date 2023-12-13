@@ -36,7 +36,7 @@
         android:fontFamily="sans-serif-medium"
         android:layout_height="wrap_content"
         android:layout_marginVertical="20dp"
-        android:text="We will notify you 30 minutes before hand" />
+        android:text="We will notify you 30 minutes before hand " />
 
     <Button
         android:id="@+id/closeConfirmation_button"

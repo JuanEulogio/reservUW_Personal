@@ -1,6 +1,8 @@
 package com.cs407.reservuw.roomDB;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.Insert;
 import androidx.room.Query;
 
 import java.util.List;
@@ -12,4 +14,11 @@ public interface FavoriteRoomDAO {
      */
     @Query("SELECT room_uid FROM FavoriteRoom WHERE user_uid LIKE :userID")
     List<Integer> getRoomsByBuilding(int userID);
+
+    @Insert
+    void insertNewFav(FavoriteRoom favoriteRoom);
+
+    @Delete
+    void deleteFav(FavoriteRoom favoriteRoom);
+
 }
