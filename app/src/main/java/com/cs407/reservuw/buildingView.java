@@ -78,8 +78,8 @@ public class buildingView extends AppCompatActivity {
         roomsByBuilding.observe(this, rooms -> {
             if (rooms != null) {
                 for (Rooms room : rooms) {
-                    Log.d(TAG, "Building: " + room.getBuilding() + ", Room Number: " + room.getRoomNumber());
-                    items.add(new item(Integer.toString(room.getRoomNumber()), placeName));
+                    Log.d(TAG, "Building: " + room.getBuilding() + ", Room Number: " + room.getRoomNumber() + "ROOM UID" + room.getUid());
+                    items.add(new item(Integer.toString(room.getRoomNumber()), placeName, room.getUid()));
                 }
             } else {
                 Log.d(TAG, "Rooms are null");
@@ -114,6 +114,7 @@ public class buildingView extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), roomView.class);
                     intent.putExtra("roomNum", item.getRoomNum());
                     intent.putExtra("buildingName", item.getBuilding());
+                    intent.putExtra("roomUID", item.getRoomUID());
                     startActivity(intent);
                 }
             });
