@@ -11,6 +11,8 @@ import java.util.List;
 public interface FavoriteRoomDAO {
     /**
      * query room_uid by user_uid. Used to get rooms via this room_uid list query
+     *
+     * NOTE: mistake in name. accident. just work with it
      */
     @Query("SELECT room_uid FROM FavoriteRoom WHERE user_uid LIKE :userID")
     List<Integer> getRoomsByBuilding(int userID);
