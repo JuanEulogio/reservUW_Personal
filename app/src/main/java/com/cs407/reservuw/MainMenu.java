@@ -333,9 +333,9 @@ public class MainMenu extends AppCompatActivity implements GoogleMap.OnMarkerCli
 
 
         //TODO: go to Building view. choose building via buildings places ID
-        //Intent intent= new Intent(this, BuildingView.class);
-        //intent.putExtra("ID", placeID);
-        //startActivity(intent);
+        Intent intent= new Intent(this, buildingView.class);
+        intent.putExtra("ID", placeID);
+        startActivity(intent);
 
         // Return false to indicate that we have not consumed the event and that we wish
         // for the default behavior to occur (which is for the camera to move such that the
@@ -369,3 +369,6 @@ public class MainMenu extends AppCompatActivity implements GoogleMap.OnMarkerCli
     }
 
 }
+
+
+
