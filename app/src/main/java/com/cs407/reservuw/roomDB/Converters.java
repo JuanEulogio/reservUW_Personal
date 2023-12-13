@@ -9,7 +9,6 @@ import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-//TODO:  get help here
 public class Converters {
     //for my LocalDateTime
     @TypeConverter
@@ -30,22 +29,24 @@ public class Converters {
         }
     }
 
-
+    /**
     // for Array list of favorite user rooms
     //TODO: make this works.
     // source: https://stackoverflow.com/questions/49566388/how-to-store-and-retrieve-array-objects-using-room-in-android
-    // if all else fails: use date, and time types
+    // if fails, make another room database for the fav list
     @TypeConverter
-    public static ArrayList<Rooms> fromString(String value) {
-        Type listType = new TypeToken<ArrayList<Rooms>>() {}.getType();
-        return new Gson().fromJson(value, listType);
+    public static ArrayList<String> fromString(String value) {
+        Type listType = new TypeToken<ArrayList<String>>() {}.getType();
+        return new Gson().fromJson(String.valueOf(value), listType);
     }
 
     @TypeConverter
-    public static String fromArrayList(ArrayList<Rooms> list) {
+    public static String fromArrayList(ArrayList<String> list) {
         Gson gson = new Gson();
         String json = gson.toJson(list);
         return json;
     }
+    **/
+
 }
 

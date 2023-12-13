@@ -11,17 +11,19 @@ import java.util.List;
 @Dao
 public interface roomDAO {
     /**
-     * query rooms by building
+     * query rooms by building. used when going to building view
      */
     @Query("SELECT * FROM Rooms WHERE building LIKE :building")
     LiveData<List<Rooms>> getRoomsByBuilding(String building);
 
-    //How to query filter building view?
-    //1) start our building view by doing a query of all rooms of that building
-    //2) then query all reservation at the specified time/date(default is next current hour)
-    //3) do a for loop comparing these list, if a room matches, remove it from our room list we will
-    // display to the user in the recycled view
+    /**
+     * query rooms by list of room_id. in order to get user favorite rooms
+     */
+    //TODO: check that my query with roomID is good
+    // if not, query one roomID at a time to get Room.
+    @Query("SELECT * FROM Rooms WHERE uid IN (:roomID)")
+    LiveData<List<Rooms>> getRoomsByRoomID(List<Integer> roomID);
 
-    //UPDATE: might have done a query that does this all for us
+
 
 }
