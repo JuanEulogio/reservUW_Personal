@@ -10,9 +10,12 @@ import java.util.List;
 @Dao
 public interface reservationDAO {
 
-    //used to get users reservations
+    /**
+     * used in reservation activity
+     */
     @Query("SELECT * FROM reservations WHERE USER_uid LIKE :USER_uid")
-    public LiveData<List<Reservations>> getReservationByUser(int USER_uid);
+    LiveData<List<Reservations>> getReservationByUser(int USER_uid);
+
 
     //used to get what we should filter in our building view building, and dateTime
     //1) first we select all room from our reservations with the building we want

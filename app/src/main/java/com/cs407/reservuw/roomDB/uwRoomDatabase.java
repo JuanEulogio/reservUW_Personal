@@ -9,7 +9,7 @@ import androidx.room.TypeConverters;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {User.class, Rooms.class, Reservations.class}, version = 1)
+@Database(entities = {User.class, Rooms.class, Reservations.class, FavoriteRoom.class}, version = 1)
 @TypeConverters({Converters.class})
 public abstract class uwRoomDatabase extends RoomDatabase {
     public abstract userDAO userDAO();
@@ -17,6 +17,10 @@ public abstract class uwRoomDatabase extends RoomDatabase {
     public abstract roomDAO roomDAO();
 
     public abstract reservationDAO reservationDAO();
+
+    public abstract FavoriteRoomDAO FavoriteRoomDAO();
+
+
 
     private volatile static uwRoomDatabase INSTANCE;
 
@@ -41,11 +45,6 @@ public abstract class uwRoomDatabase extends RoomDatabase {
         }
         return INSTANCE;
     }
-
-    public static void destroyInstance() {
-        INSTANCE = null;
-    }
-
 
 
 }
