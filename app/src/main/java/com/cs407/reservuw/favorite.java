@@ -50,7 +50,7 @@ public class favorite extends AppCompatActivity {
         Log.i(TAG, "right before getRoomsByBuilding(uid)" + Integer.toString(uid));
         List<Integer> favRoomId = favoriteDAO.getRoomsByBuilding(uid);
         Log.i(TAG, "got getRoomsByBuilding(uid)");
-        LiveData<List<Rooms>> roomsByRoomId = myRoomDAO.getRoomsByRoomID(favRoomId);
+        LiveData<List<Rooms>> roomsByRoomId = myRoomDAO.getRoomsByRoomID(favRoomId.toString());
 
 
         List<item> items = new ArrayList<>();
