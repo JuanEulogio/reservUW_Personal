@@ -90,7 +90,9 @@ public class buildingView extends AppCompatActivity {
             // Set up RecyclerView after fetching data
             RecyclerView recyclerView = findViewById(R.id.buildingRecyclerView);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.setAdapter(new BuildingAdapter(getApplicationContext(), items));
+            BuildingAdapter adapter = new BuildingAdapter(getApplicationContext(), items);
+            recyclerView.setAdapter(adapter);
+
 
             ImageButton backButton = findViewById(R.id.backButton);
             backButton.setOnClickListener(new View.OnClickListener() {
@@ -99,6 +101,24 @@ public class buildingView extends AppCompatActivity {
                     finish();
                 }
             });
+
+
+
+            adapter.setOnItemClickListener(new BuildingAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(item item) {
+                    // Handle item click here
+                    // Example: You can open a new activity or perform any action
+                    // based on the clicked item.
+                    // Access item details like item.getRoomNumber(), item.getPlaceName(), etc.
+                    Intent intent = new Intent(getApplicationContext(), roomView.class);
+                    intent.putExtra("roomNum", item.getRoomNum());
+                    intent.putExtra("buildingName", item.getBuilding());
+                    startActivity(intent);
+                }
+            });
         });
+
+
     }
 }

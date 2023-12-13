@@ -92,7 +92,7 @@ public class MainMenu extends AppCompatActivity implements GoogleMap.OnMarkerCli
         SharedPreferences sharedPreferences = getSharedPreferences ("com.cs407.reservuw", MODE_PRIVATE);
 
         if(sharedPreferences.getInt ( "uid", -1) == -1){
-            sharedPreferences.edit() .putInt("uid", userID).apply();
+            sharedPreferences.edit().putInt("uid", userID).apply();
         }
 
 

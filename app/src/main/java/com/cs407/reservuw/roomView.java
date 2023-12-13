@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 public class roomView extends AppCompatActivity {
 
@@ -18,6 +19,17 @@ public class roomView extends AppCompatActivity {
         Button cancelButton = findViewById(R.id.cancelButton);
         Button reserveButton = findViewById(R.id.reserveButton);
         ImageButton backButton = findViewById(R.id.backButton);
+        TextView roomInfo = findViewById(R.id.boxedTextView);
+
+        Intent receivedIntent = getIntent();
+        String roomNum = receivedIntent.getStringExtra("roomNum");
+        String buildingName = receivedIntent.getStringExtra("buildingName");
+
+        String roomInfoText = "This room is located at " + buildingName + ".\n"
+                + "Room Number: " + roomNum;
+
+        roomInfo.setText(roomInfoText);
+
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -29,7 +41,7 @@ public class roomView extends AppCompatActivity {
         reserveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), MainMenu.class));
+                startActivity(new Intent(getApplicationContext(), reservationConfirmed.class));
                 // modify/add the room to the reserved room array
             }
         });

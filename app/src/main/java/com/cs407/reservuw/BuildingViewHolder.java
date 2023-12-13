@@ -14,4 +14,8 @@ public class BuildingViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         roomNumView= itemView.findViewById(R.id.roomNum);
     }
+
+    public void bind(item item) {
+        roomNumView.setText(item.getRoomNum());
+    }
 }
