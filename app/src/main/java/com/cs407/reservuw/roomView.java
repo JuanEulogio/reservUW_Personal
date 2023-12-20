@@ -40,7 +40,6 @@ public class roomView extends AppCompatActivity {
                 getSharedPreferences ("com.cs407.reservuw", Context.MODE_PRIVATE);
 
         uwRoomDatabase myDatabase = Room.databaseBuilder(getApplicationContext(), uwRoomDatabase.class, "my room database")
-                .createFromAsset("database/rooms.db")
                 .allowMainThreadQueries()
                 .build();
 
@@ -72,8 +71,11 @@ public class roomView extends AppCompatActivity {
             if (rooms != null) {
                 for (Rooms room : rooms) {
                     Log.d(TAG, "Building: " + room.getBuilding() + ", Room Number: " + room.getRoomNumber());
+
                     if (Integer.toString(room.getRoomNumber()).equals(roomNum)) {
                         isFav = true;
+
+
                     }
                 }
             } else {
@@ -111,6 +113,9 @@ public class roomView extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Log.i(TAG, "favButton Pressed");
+
+                    //TODO: comment by juan to Jay: this might be where you got the error.
+
                     FavoriteRoom favRoom = new FavoriteRoom(0, uid, roomUID);
                     if(isFav) {
                         Log.i(TAG, "delete");
