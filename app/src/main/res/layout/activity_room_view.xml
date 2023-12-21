@@ -10,6 +10,7 @@
         android:id="@+id/room_view_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="33dp"
         android:fontFamily="sans-serif-black"
         android:gravity="center"
         android:text="Room View"
@@ -22,6 +23,7 @@
         android:id="@+id/boxedTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:background="@drawable/textbox"
         android:padding="16dp"
         android:text="Info of the Room"
@@ -33,17 +35,22 @@
         android:id="@+id/cancelButton"
         android:layout_width="180dp"
         android:layout_height="47dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
         android:text="Cancel"
         app:layout_constraintEnd_toStartOf="@id/reserveButton"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/boxedTextView" />
 
     <Button
         android:id="@+id/reserveButton"
         android:layout_width="180dp"
         android:layout_height="47dp"
-        android:layout_marginStart="48dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
         android:text="Reserve"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/cancelButton"
         app:layout_constraintTop_toBottomOf="@+id/boxedTextView" />
 

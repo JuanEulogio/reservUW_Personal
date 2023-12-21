@@ -19,10 +19,8 @@ public interface roomDAO {
     /**
      * query rooms by list of room_id. in order to get user favorite rooms
      */
-    //TODO: to query we get the List<Integer> of some other source and then make it into a string
-    // which will then be passed here. String should look something like "1, 2, 3, etc."
-    @Query("SELECT * FROM Rooms WHERE uid IN (:roomIDs)")
-    LiveData<List<Rooms>> getRoomsByRoomID(String roomIDs);
+    @Query("SELECT * FROM Rooms WHERE uid IN (:room_id)")
+    LiveData<List<Rooms>> getRoomsByRoomID(List<Integer> room_id);
 
 
 }

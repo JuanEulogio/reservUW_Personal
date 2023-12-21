@@ -15,7 +15,10 @@ public interface FavoriteRoomDAO {
      * NOTE: mistake in name. accident. just work with it
      */
     @Query("SELECT room_uid FROM FavoriteRoom WHERE user_uid LIKE :userID")
-    List<Integer> getRoomsByBuilding(int userID);
+    List<Integer> getRoomsByUserID(int userID);
+
+    @Query("SELECT * FROM FavoriteRoom WHERE user_uid LIKE :userID AND room_uid LIKE :roomID")
+    FavoriteRoom getSpecificIfFavorite(int userID, int roomID);
 
     @Insert
     void insertNewFav(FavoriteRoom favoriteRoom);

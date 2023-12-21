@@ -9,10 +9,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cs407.reservuw.roomDB.Rooms;
@@ -20,12 +22,15 @@ import com.cs407.reservuw.roomDB.roomDAO;
 import com.cs407.reservuw.roomDB.uwRoomDatabase;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FetchPhotoRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class buildingView extends AppCompatActivity {
@@ -33,14 +38,31 @@ public class buildingView extends AppCompatActivity {
     private PlacesClient placesClient;
     private String placeName;
 
+    ImageView buildingImage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building_view);
 
-        RecyclerView recyclerView = findViewById(R.id.buildingRecyclerView);
+
         TextView buildingViewTitle = findViewById(R.id.building_view_title);
 
+        buildingImage= findViewById(R.id.buildingImageView);
+
+
+
+        //setting back button
+        ImageButton backButton = findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+
+        //Getting building name
         placesClient = Places.createClient(this);
         Intent receivedIntent = getIntent();
         final String placeId = receivedIntent.getStringExtra("ID");
@@ -64,7 +86,50 @@ public class buildingView extends AppCompatActivity {
                 // NOTE: Handle error with given status code.
             }
         });
+
+
+        //Getting building image
+        Log.i(TAG, "Place ID intent received: " + placeId);
+        // Specify fields. Requests for photos must always have the PHOTO_METADATAS field.
+        final List<Place.Field> fields = Collections.singletonList(Place.Field.PHOTO_METADATAS);
+
+        // Get a Place object (this example uses fetchPlace(), but you can also use findCurrentPlace())
+        final FetchPlaceRequest placeRequest = FetchPlaceRequest.newInstance(placeId, fields);
+
+        placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
+            final Place place = response.getPlace();
+
+            // Get the photo metadata.
+            final List<PhotoMetadata> metadata = place.getPhotoMetadatas();
+            if (metadata == null || metadata.isEmpty()) {
+                Log.w(TAG, "No photo metadata.");
+                return;
+            }
+            final PhotoMetadata photoMetadata = metadata.get(0);
+
+            // Get the attribution text.
+                //final String attributions = photoMetadata.getAttributions();
+
+            // Create a FetchPhotoRequest.
+            final FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
+                    .build();
+            placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
+                Bitmap bitmap = fetchPhotoResponse.getBitmap();
+                buildingImage.setImageBitmap(bitmap);
+            }).addOnFailureListener((exception) -> {
+                if (exception instanceof ApiException) {
+                    final ApiException apiException = (ApiException) exception;
+                    Log.e(TAG, "Place not found: " + exception.getMessage());
+                    final int statusCode = apiException.getStatusCode();
+
+                        //Handle error with given status code.
+                }
+            });
+        });
+
+
     }
+
 
     private void executeRemainingCode(String placeId) {
         uwRoomDatabase myDatabase = Room.databaseBuilder(getApplicationContext(), uwRoomDatabase.class, "my room database")
@@ -79,7 +144,7 @@ public class buildingView extends AppCompatActivity {
             if (rooms != null) {
                 for (Rooms room : rooms) {
                     Log.d(TAG, "Building: " + room.getBuilding() + ", Room Number: " + room.getRoomNumber() + "ROOM UID" + room.getUid());
-                    items.add(new item(Integer.toString(room.getRoomNumber()), placeName, room.getUid()));
+                    items.add(new item("Room " + Integer.toString(room.getRoomNumber()), placeName, room.getUid()));
                 }
             } else {
                 Log.d(TAG, "Rooms are null");
@@ -93,14 +158,6 @@ public class buildingView extends AppCompatActivity {
             BuildingAdapter adapter = new BuildingAdapter(getApplicationContext(), items);
             recyclerView.setAdapter(adapter);
 
-
-            ImageButton backButton = findViewById(R.id.backButton);
-            backButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    finish();
-                }
-            });
 
 
 

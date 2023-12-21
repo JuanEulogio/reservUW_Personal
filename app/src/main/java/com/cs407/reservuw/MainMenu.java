@@ -349,7 +349,6 @@ public class MainMenu extends AppCompatActivity implements GoogleMap.OnMarkerCli
         if(placeID== null) return false;
 
 
-        //TODO: go to Building view. choose building via buildings places ID
         Intent intent= new Intent(this, buildingView.class);
         intent.putExtra("ID", placeID);
         startActivity(intent);
