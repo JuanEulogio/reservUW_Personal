@@ -3,7 +3,6 @@ package com.cs407.reservuw;
 import static android.content.ContentValues.TAG;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.room.Room;
 
 import android.content.Context;
@@ -18,14 +17,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.cs407.reservuw.roomDB.FavoriteRoom;
-import com.cs407.reservuw.roomDB.FavoriteRoomDAO;
-import com.cs407.reservuw.roomDB.Rooms;
-import com.cs407.reservuw.roomDB.roomDAO;
 import com.cs407.reservuw.roomDB.uwRoomDatabase;
 
-import java.util.List;
-
-public class roomView extends AppCompatActivity {
+public class RoomActivity extends AppCompatActivity {
 
     boolean isFav = false;
 
@@ -47,6 +41,14 @@ public class roomView extends AppCompatActivity {
         int uid = sharedPreferences.getInt ("uid", -1);
 
 
+        //back button
+        ImageButton backButton = findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         //Intents
         Intent receivedIntent = getIntent();
@@ -56,7 +58,6 @@ public class roomView extends AppCompatActivity {
 
         Button cancelButton = findViewById(R.id.cancelButton);
         Button reserveButton = findViewById(R.id.reserveButton);
-        ImageButton backButton = findViewById(R.id.backButton);
         TextView roomInfo = findViewById(R.id.boxedTextView);
         ImageButton favButton = findViewById(R.id.likeButton);
         //color the heart if current room is in the fav rooms for current user
@@ -77,14 +78,14 @@ public class roomView extends AppCompatActivity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), MainMenu.class));
+                startActivity(new Intent(getApplicationContext(), MainMenuActivity.class));
             }
         });
 
         reserveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), reservationConfirmed.class);
+                Intent intent = new Intent(getApplicationContext(), reservationConfirmedActivity.class);
                 intent.putExtra("roomNum", roomNum);
                 intent.putExtra("buildingName", buildingName);
                 startActivity(intent);
@@ -95,12 +96,7 @@ public class roomView extends AppCompatActivity {
         });
 
 
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+
 
         favButton.setOnClickListener(new View.OnClickListener() {
             @Override

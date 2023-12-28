@@ -17,6 +17,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cs407.reservuw.recycledViewFiles.RoomAdapter;
+import com.cs407.reservuw.recycledViewFiles.Room_item;
 import com.cs407.reservuw.roomDB.Rooms;
 import com.cs407.reservuw.roomDB.roomDAO;
 import com.cs407.reservuw.roomDB.uwRoomDatabase;
@@ -33,7 +35,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class buildingView extends AppCompatActivity {
+public class BuildingActivity extends AppCompatActivity {
 
     private PlacesClient placesClient;
     private String placeName;
@@ -138,13 +140,13 @@ public class buildingView extends AppCompatActivity {
         roomDAO myRoomDAO = myDatabase.roomDAO();
         LiveData<List<Rooms>> roomsByBuilding = myRoomDAO.getRoomsByBuilding(placeId);
 
-        List<item> items = new ArrayList<>();
+        List<Room_item> Room_items = new ArrayList<>();
 
         roomsByBuilding.observe(this, rooms -> {
             if (rooms != null) {
                 for (Rooms room : rooms) {
                     Log.d(TAG, "Building: " + room.getBuilding() + ", Room Number: " + room.getRoomNumber() + "ROOM UID" + room.getUid());
-                    items.add(new item("Room " + Integer.toString(room.getRoomNumber()), placeName, room.getUid()));
+                    Room_items.add(new Room_item("Room " + Integer.toString(room.getRoomNumber()), placeName, room.getUid()));
                 }
             } else {
                 Log.d(TAG, "Rooms are null");
@@ -155,23 +157,23 @@ public class buildingView extends AppCompatActivity {
             // Set up RecyclerView after fetching data
             RecyclerView recyclerView = findViewById(R.id.buildingRecyclerView);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            BuildingAdapter adapter = new BuildingAdapter(getApplicationContext(), items);
+            RoomAdapter adapter = new RoomAdapter(getApplicationContext(), Room_items);
             recyclerView.setAdapter(adapter);
 
 
 
 
-            adapter.setOnItemClickListener(new BuildingAdapter.OnItemClickListener() {
+            adapter.setOnItemClickListener(new RoomAdapter.OnItemClickListener() {
                 @Override
-                public void onItemClick(item item) {
+                public void onItemClick(Room_item Room_item) {
                     // Handle item click here
                     // Example: You can open a new activity or perform any action
                     // based on the clicked item.
                     // Access item details like item.getRoomNumber(), item.getPlaceName(), etc.
-                    Intent intent = new Intent(getApplicationContext(), roomView.class);
-                    intent.putExtra("roomNum", item.getRoomNum());
-                    intent.putExtra("buildingName", item.getBuilding());
-                    intent.putExtra("roomUID", item.getRoomUID());
+                    Intent intent = new Intent(getApplicationContext(), RoomActivity.class);
+                    intent.putExtra("roomNum", Room_item.getRoomNum());
+                    intent.putExtra("buildingName", Room_item.getBuilding());
+                    intent.putExtra("roomUID", Room_item.getRoomUID());
                     startActivity(intent);
                 }
             });

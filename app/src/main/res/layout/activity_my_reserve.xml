@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".myReserve"
+    tools:context=".myReserveActivity"
     android:orientation="vertical">
 
     <ImageButton
@@ -30,12 +30,19 @@
         android:text="My Reserves"
         android:textColor="@color/UWcolor"/>
 
+    <CalendarView
+        android:id="@+id/calendarView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/textbox" />
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/reservedRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/reserved_rooms_title"
         android:layout_margin="5dp" />
-
 
 </LinearLayout>

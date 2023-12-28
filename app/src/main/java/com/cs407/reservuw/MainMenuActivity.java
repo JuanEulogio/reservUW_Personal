@@ -15,12 +15,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -30,10 +28,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.PlaceLikelihood;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
-import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
-import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -56,7 +51,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 
 
-public class MainMenu extends AppCompatActivity implements GoogleMap.OnMarkerClickListener, OnMapReadyCallback {
+public class MainMenuActivity extends AppCompatActivity implements GoogleMap.OnMarkerClickListener, OnMapReadyCallback {
 
 
 
@@ -117,7 +112,6 @@ public class MainMenu extends AppCompatActivity implements GoogleMap.OnMarkerCli
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        //binding = new ActivityMainMenuBinding(findViewById(R.id.bottomNavigationView));
         BottomNavigationView binding = findViewById(R.id.bottomNavigationView);
         binding.setSelectedItemId(R.id.logout);
         binding.setSelectedItemId(R.id.reserves);
@@ -146,11 +140,11 @@ public class MainMenu extends AppCompatActivity implements GoogleMap.OnMarkerCli
     }
 
     public void goToFav() {
-        startActivity(new Intent(getApplicationContext(), favorite.class));
+        startActivity(new Intent(getApplicationContext(), FavoritesActivity.class));
     }
 
     public void goToMyRes() {
-        startActivity(new Intent(getApplicationContext(), myReserve.class));
+        startActivity(new Intent(getApplicationContext(), myReserveActivity.class));
     }
 
     public void goToLogin(){
@@ -159,7 +153,7 @@ public class MainMenu extends AppCompatActivity implements GoogleMap.OnMarkerCli
                 getSharedPreferences ("com.cs407.reservuw", Context.MODE_PRIVATE);
         sharedPreferences.edit().clear().apply();
 
-        startActivity(new Intent(getApplicationContext(), loginActivity.class));
+        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
     }
 
     @Override
@@ -349,7 +343,7 @@ public class MainMenu extends AppCompatActivity implements GoogleMap.OnMarkerCli
         if(placeID== null) return false;
 
 
-        Intent intent= new Intent(this, buildingView.class);
+        Intent intent= new Intent(this, BuildingActivity.class);
         intent.putExtra("ID", placeID);
         startActivity(intent);
 

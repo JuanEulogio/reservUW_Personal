@@ -2,14 +2,8 @@ package com.cs407.reservuw;
 
 import static android.content.ContentValues.TAG;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
 import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,20 +13,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cs407.reservuw.roomDB.User;
 import com.cs407.reservuw.roomDB.uwRoomDatabase;
 
-import org.json.JSONArray;
-
-import java.time.zone.ZoneOffsetTransitionRule;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class loginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     private EditText editTextUsername;
     private EditText editTextPassword;
@@ -51,7 +39,7 @@ public class loginActivity extends AppCompatActivity {
         if (sharedPreferences.getInt ( "uid", -1) != -1) {
             // Implies that the uid exists in SharedPreferences. The user did not log out when closing
             // the application
-            Intent intent = new Intent(this, MainMenu.class);
+            Intent intent = new Intent(this, MainMenuActivity.class);
             intent.putExtra("uid", sharedPreferences.getInt("uid", -1));
             startActivity(intent);
         }
@@ -106,7 +94,7 @@ public class loginActivity extends AppCompatActivity {
 
             Log.i(TAG, "new user. new uid: " + myDatabase.userDAO().findByUser(username, password).getUid());
 
-            Intent intent = new Intent(this, MainMenu.class);
+            Intent intent = new Intent(this, MainMenuActivity.class);
             intent.putExtra("uid", newUser.getUid());
             Log.i(TAG, "new user: " + newUser.getUid());
             startActivity(intent);
@@ -117,7 +105,7 @@ public class loginActivity extends AppCompatActivity {
             //user exist and no need to create user
             Log.i(TAG, "user exist: " + user.getUid());
 
-            Intent intent = new Intent(this, MainMenu.class);
+            Intent intent = new Intent(this, MainMenuActivity.class);
             intent.putExtra("uid", user.getUid());
             startActivity(intent);
         }

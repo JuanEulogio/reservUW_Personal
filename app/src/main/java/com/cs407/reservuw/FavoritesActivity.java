@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
+import com.cs407.reservuw.recycledViewFiles.RoomAdapter;
+import com.cs407.reservuw.recycledViewFiles.Room_item;
 import com.cs407.reservuw.roomDB.FavoriteRoomDAO;
 import com.cs407.reservuw.roomDB.roomDAO;
 import com.cs407.reservuw.roomDB.Rooms;
@@ -30,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class favorite extends AppCompatActivity {
+public class FavoritesActivity extends AppCompatActivity {
 
     private PlacesClient placesClient;
 
@@ -83,12 +85,12 @@ public class favorite extends AppCompatActivity {
 
         LiveData<List<Rooms>> roomsByRoomId = myRoomDAO.getRoomsByRoomID(favRoomId);
 
-        List<item> items = new ArrayList<>();
+        List<Room_item> Room_items = new ArrayList<>();
         roomsByRoomId.observe(this, rooms -> {
             if (rooms != null) {
                 for (Rooms room : rooms) {
                     Log.d(TAG, "Building: " + room.getBuilding() + ", Room Number: " + room.getRoomNumber());
-                    items.add(new item("Room: " + Integer.toString(room.getRoomNumber()), room.getBuilding(), room.getUid()));
+                    Room_items.add(new Room_item("Room: " + Integer.toString(room.getRoomNumber()), room.getBuilding(), room.getUid()));
                 }
             } else {
                 Log.d(TAG, "Rooms are null");
@@ -97,28 +99,28 @@ public class favorite extends AppCompatActivity {
             // Set up RecyclerView after fetching data
             RecyclerView recyclerView = findViewById(R.id.favoritesRecyclerView);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            BuildingAdapter adapter = new BuildingAdapter(getApplicationContext(), items);
+            RoomAdapter adapter = new RoomAdapter(getApplicationContext(), Room_items);
             recyclerView.setAdapter(adapter);
 
 
-            adapter.setOnItemClickListener(new BuildingAdapter.OnItemClickListener() {
+            adapter.setOnItemClickListener(new RoomAdapter.OnItemClickListener() {
                 @Override
-                public void onItemClick(item item) {
+                public void onItemClick(Room_item Room_item) {
                     // Handle item click here
                     // Example: You can open a new activity or perform any action
                     // based on the clicked item.
                     // Access item details like item.getRoomNumber(), item.getPlaceName(), etc.
-                    Intent intent = new Intent(getApplicationContext(), roomView.class);
-                    intent.putExtra("roomNum", item.getRoomNum());
-                    intent.putExtra("roomUID", item.getRoomUID());
+                    Intent intent = new Intent(getApplicationContext(), RoomActivity.class);
+                    intent.putExtra("roomNum", Room_item.getRoomNum());
+                    intent.putExtra("roomUID", Room_item.getRoomUID());
 
                     //used to get the name of the building. Used because it will be used in the room view
                     //if the user clicks one of the rooms favorites
                     //Getting building name
                     placesClient = Places.createClient(getApplicationContext());
 
-                    final String placeId = item.getBuilding();
-                    Log.d(TAG, "Building: " + item.getBuilding());
+                    final String placeId = Room_item.getBuilding();
+                    Log.d(TAG, "Building: " + Room_item.getBuilding());
                     final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
                     final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
 

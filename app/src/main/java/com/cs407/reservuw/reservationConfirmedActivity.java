@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class reservationConfirmed extends AppCompatActivity {
+public class reservationConfirmedActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +26,7 @@ public class reservationConfirmed extends AppCompatActivity {
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent= new Intent(reservationConfirmed.this, MainMenu.class);
+                Intent intent= new Intent(reservationConfirmedActivity.this, MainMenuActivity.class);
                 startActivity(intent);
             }
         });

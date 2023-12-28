@@ -1,11 +1,11 @@
-package com.cs407.reservuw;
+package com.cs407.reservuw.recycledViewFiles;
 
-public class item {
+public class Room_item {
     String building;
     String roomNum;
     int roomUID;
 
-    public item(String roomNum, String building, int roomUID) {
+    public Room_item(String roomNum, String building, int roomUID) {
         this.building = building;
         this.roomNum = roomNum;
         this.roomUID = roomUID;
