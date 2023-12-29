@@ -77,6 +77,7 @@ public class LoginActivity extends AppCompatActivity {
 
         User user= myDatabase.userDAO().findByUser(username, password);
 
+
         //if user doest exist we make a new user, insert to db, and go to main menu
         if (user == null ) {
             //user not in the database so we make it for them
@@ -92,13 +93,12 @@ public class LoginActivity extends AppCompatActivity {
             User newUser = new User(0, username, password);
             myDatabase.userDAO().insertUser(newUser);
 
-            Log.i(TAG, "new user. new uid: " + myDatabase.userDAO().findByUser(username, password).getUid());
+            Log.i(TAG, "new user just inserted. Its (new) uid= " + myDatabase.userDAO().findByUser(username, password).getUid());
 
             Intent intent = new Intent(this, MainMenuActivity.class);
-            intent.putExtra("uid", newUser.getUid());
-            Log.i(TAG, "new user: " + newUser.getUid());
+            intent.putExtra("uid", myDatabase.userDAO().findByUser(username, password).getUid());
+            Log.i(TAG, "new user: " + myDatabase.userDAO().findByUser(username, password).getUid());
             startActivity(intent);
-
 
         }else{
 

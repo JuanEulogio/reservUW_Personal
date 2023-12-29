@@ -23,7 +23,6 @@ public class RoomActivity extends AppCompatActivity {
 
     boolean isFav = false;
 
-    //TODO: used to store fav room if is exists
     FavoriteRoom favRoom;
 
     @Override
@@ -78,7 +77,13 @@ public class RoomActivity extends AppCompatActivity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), MainMenuActivity.class));
+                Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
+                SharedPreferences sharedPreferences =
+                        getSharedPreferences ("com.cs407.reservuw", Context.MODE_PRIVATE);
+
+                int uid = sharedPreferences.getInt ("uid", -1);
+                intent.putExtra("uid", uid);
+                startActivity(intent);
             }
         });
 

@@ -15,10 +15,6 @@ public class Room_item {
         return building;
     }
 
-    public void setBuilding(String building) {
-        this.building = building;
-    }
-
     public String getRoomNum() {
         return roomNum;
     }

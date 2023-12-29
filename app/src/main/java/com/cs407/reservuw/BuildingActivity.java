@@ -182,3 +182,10 @@ public class BuildingActivity extends AppCompatActivity {
 
     }
 }
+
+
+
+// pick the dateTime with localDateTime useing of()
+// filter and find this date through available days via sqlRoom query
+// query stores of() data
+//

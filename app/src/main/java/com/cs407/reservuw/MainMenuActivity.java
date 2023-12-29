@@ -84,6 +84,7 @@ public class MainMenuActivity extends AppCompatActivity implements GoogleMap.OnM
         //gets login uid to make shared preference
         Intent intent= getIntent();
         int userID= intent.getIntExtra("uid", -1);
+        Log.i(TAG, userID+ "");
 
         SharedPreferences sharedPreferences = getSharedPreferences ("com.cs407.reservuw", MODE_PRIVATE);
 
