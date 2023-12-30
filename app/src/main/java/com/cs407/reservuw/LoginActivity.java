@@ -67,6 +67,16 @@ public class LoginActivity extends AppCompatActivity {
                 onLoginClick(view);
             }
         });
+
+
+
+        Button buttonCreateAccount = findViewById(R.id.createNewAccount);
+        buttonCreateAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onNewAccountClick(view);
+            }
+        });
     }
 
 
@@ -77,41 +87,35 @@ public class LoginActivity extends AppCompatActivity {
 
         User user= myDatabase.userDAO().findByUser(username, password);
 
-
-        //if user doest exist we make a new user, insert to db, and go to main menu
+        //if user doesnt exist we prompt that they arent in the database and to create a new account
         if (user == null ) {
             //user not in the database so we make it for them
-            alertTextView.setText("New User. Adding you to the database");
+            alertTextView.setText("User Not Registered. Please Create a New Account");
             //user not in the database so we make it for them
-            try {
-                //timer for user to see alertTextView prompt
-                TimeUnit.SECONDS.sleep(1);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
-            User newUser = new User(0, username, password);
-            myDatabase.userDAO().insertUser(newUser);
-
-            Log.i(TAG, "new user just inserted. Its (new) uid= " + myDatabase.userDAO().findByUser(username, password).getUid());
-
-            Intent intent = new Intent(this, MainMenuActivity.class);
-            intent.putExtra("uid", myDatabase.userDAO().findByUser(username, password).getUid());
-            Log.i(TAG, "new user: " + myDatabase.userDAO().findByUser(username, password).getUid());
-            startActivity(intent);
 
         }else{
-
-            //user exist and no need to create user
+            //user exist and we go to main menu
             Log.i(TAG, "user exist: " + user.getUid());
 
             Intent intent = new Intent(this, MainMenuActivity.class);
             intent.putExtra("uid", user.getUid());
             startActivity(intent);
         }
-
-
     }
 
 
+    public void onNewAccountClick(View view){
+        String username = editTextUsername.getText().toString();
+        String password = editTextPassword.getText().toString();
+
+
+        alertTextView.setText("New User. Adding you to the database");
+
+        User newUser = new User(0, username, password);
+        myDatabase.userDAO().insertUser(newUser);
+
+        Intent intent = new Intent(this, MainMenuActivity.class);
+        intent.putExtra("uid", myDatabase.userDAO().findByUser(username, password).getUid());
+        startActivity(intent);
+    }
 }
