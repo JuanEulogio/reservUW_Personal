@@ -26,12 +26,9 @@ import com.cs407.reservuw.roomDB.reservationDAO;
 import com.cs407.reservuw.roomDB.uwRoomDatabase;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -143,11 +140,11 @@ public class myReserveActivity extends AppCompatActivity {
         //clean up for liveData to show update list
         reservationItems.clear();
 
-        //query 1= showing all reservations. Default behaviour
+        //query 1= showing all reservations. [Default behaviour]
         //query 2= showing by a specific day
         reservationQuery = reservationDAO.getReservationByUser(uid);
         if(query==2){
-            reservationQuery = reservationDAO.getReservationByDayMonth(uid, day, month);
+            reservationQuery = reservationDAO.getUserReservationByDayMonth(uid, day, month);
         }
 
 

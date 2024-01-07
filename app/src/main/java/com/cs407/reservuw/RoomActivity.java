@@ -17,7 +17,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.cs407.reservuw.roomDB.FavoriteRoom;
+import com.cs407.reservuw.roomDB.Reservations;
+import com.cs407.reservuw.roomDB.reservationDAO;
 import com.cs407.reservuw.roomDB.uwRoomDatabase;
+
+import java.time.LocalDateTime;
 
 public class RoomActivity extends AppCompatActivity {
 
@@ -25,15 +29,17 @@ public class RoomActivity extends AppCompatActivity {
 
     FavoriteRoom favRoom;
 
+    SharedPreferences sharedPreferences;
+    uwRoomDatabase myDatabase;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room_view);
 
-        SharedPreferences sharedPreferences =
+       sharedPreferences =
                 getSharedPreferences ("com.cs407.reservuw", Context.MODE_PRIVATE);
 
-        uwRoomDatabase myDatabase = Room.databaseBuilder(getApplicationContext(), uwRoomDatabase.class, "my room database")
+       myDatabase = Room.databaseBuilder(getApplicationContext(), uwRoomDatabase.class, "my room database")
                 .allowMainThreadQueries()
                 .build();
 
@@ -54,6 +60,8 @@ public class RoomActivity extends AppCompatActivity {
         String roomNum = receivedIntent.getStringExtra("roomNum");
         String buildingName = receivedIntent.getStringExtra("buildingName");
         int roomUID = receivedIntent.getIntExtra("roomUID", -1);
+        //TODO: get users wanted timeDate info
+        LocalDateTime timeDate;
 
         Button cancelButton = findViewById(R.id.cancelButton);
         Button reserveButton = findViewById(R.id.reserveButton);
@@ -87,16 +95,20 @@ public class RoomActivity extends AppCompatActivity {
             }
         });
 
+
+
+
         reserveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO: input new reservation
+                //myDatabase.reservationDAO().insertReservation(new Reservations(0, uid, buildingName, roomNum, timeDate));
+
+                //to reservation confirm activity
                 Intent intent = new Intent(getApplicationContext(), reservationConfirmedActivity.class);
                 intent.putExtra("roomNum", roomNum);
                 intent.putExtra("buildingName", buildingName);
                 startActivity(intent);
-
-
-                //TODO: make the reservation here
             }
         });
 

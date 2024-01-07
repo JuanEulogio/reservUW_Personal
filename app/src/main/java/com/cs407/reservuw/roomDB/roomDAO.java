@@ -23,4 +23,11 @@ public interface roomDAO {
     LiveData<List<Rooms>> getRoomsByRoomID(List<Integer> room_id);
 
 
+    /**
+     * queries list<Rooms> from a building, that excludes that are from roomID list parameter
+     */
+    @Query("SELECT * FROM Rooms WHERE building LIKE :building AND uid NOT IN (:roomID)")
+    LiveData<List<Rooms>> getRoomsByBuildingMonthDayHour(String building, List<Integer> roomID);
+
+
 }

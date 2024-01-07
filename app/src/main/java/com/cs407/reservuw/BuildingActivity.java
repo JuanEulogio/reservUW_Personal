@@ -30,6 +30,7 @@ import com.google.android.libraries.places.api.net.FetchPhotoRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,6 +42,9 @@ public class BuildingActivity extends AppCompatActivity {
     private String placeName;
 
     ImageView buildingImage;
+
+
+    LocalDateTime reserveTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +82,7 @@ public class BuildingActivity extends AppCompatActivity {
             placeName = place.getName();
             buildingViewTitle.setText(place.getName());
 
-            // Call the method to execute the rest of the code
+            // Call the method to execute the rest of the code, containing the recycled view
             executeRemainingCode(placeId);
         }).addOnFailureListener((exception) -> {
             if (exception instanceof ApiException) {
@@ -130,6 +134,14 @@ public class BuildingActivity extends AppCompatActivity {
         });
 
 
+
+        //TODO: setting reservation button/clock
+
+
+        //TODO: set button to change building(we will change activity for this)
+
+
+
     }
 
 
@@ -137,6 +149,9 @@ public class BuildingActivity extends AppCompatActivity {
         uwRoomDatabase myDatabase = Room.databaseBuilder(getApplicationContext(), uwRoomDatabase.class, "my room database")
                 .build();
 
+
+
+        //get only by a specific time available
         roomDAO myRoomDAO = myDatabase.roomDAO();
         LiveData<List<Rooms>> roomsByBuilding = myRoomDAO.getRoomsByBuilding(placeId);
 
@@ -174,6 +189,7 @@ public class BuildingActivity extends AppCompatActivity {
                     intent.putExtra("roomNum", Room_item.getRoomNum());
                     intent.putExtra("buildingName", Room_item.getBuilding());
                     intent.putExtra("roomUID", Room_item.getRoomUID());
+                    //TODO: send the localTimeDate for whatever is in the setted timeDate
                     startActivity(intent);
                 }
             });
@@ -182,10 +198,3 @@ public class BuildingActivity extends AppCompatActivity {
 
     }
 }
-
-
-
-// pick the dateTime with localDateTime useing of()
-// filter and find this date through available days via sqlRoom query
-// query stores of() data
-//

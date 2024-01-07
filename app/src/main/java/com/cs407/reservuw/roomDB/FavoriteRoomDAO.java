@@ -10,13 +10,16 @@ import java.util.List;
 @Dao
 public interface FavoriteRoomDAO {
     /**
-     * query room_uid by user_uid. Used to get rooms via this room_uid list query
-     *
-     * NOTE: mistake in name. accident. just work with it
+     * used to get rooms via querying a room_uid list and using it on our getRoomsByRoomID()
+     * roomDAO query
      */
     @Query("SELECT room_uid FROM FavoriteRoom WHERE user_uid LIKE :userID")
     List<Integer> getRoomsByUserID(int userID);
 
+    /**
+     * used on FavoriteActiviy onCreate to know if we should red heart the room, symbolizing
+     * this room is a favorite for the user
+     */
     @Query("SELECT * FROM FavoriteRoom WHERE user_uid LIKE :userID AND room_uid LIKE :roomID")
     FavoriteRoom getSpecificIfFavorite(int userID, int roomID);
 

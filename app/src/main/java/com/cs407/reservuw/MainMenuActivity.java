@@ -137,7 +137,6 @@ public class MainMenuActivity extends AppCompatActivity implements GoogleMap.OnM
         });
 
 
-
     }
 
     public void goToFav() {

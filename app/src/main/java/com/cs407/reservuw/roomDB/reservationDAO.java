@@ -6,7 +6,6 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Dao
@@ -32,10 +31,25 @@ public interface reservationDAO {
     Reservations getReservationByUID(int reservationUID);
 
     /**
-     * used reservation by given date
+     * used to display users reservations at a specific day and month in myReserveActivity
      */
     @Query("SELECT * FROM reservations WHERE day LIKE :day AND " +
             "month LIKE :month AND USER_uid LIKE :userUID")
-    LiveData<List<Reservations>> getReservationByDayMonth(int userUID, int day, int month);
+    LiveData<List<Reservations>> getUserReservationByDayMonth(int userUID, int day, int month);
+
+    /**
+     * used to get list of <ROOM_uid> that are at a specific building, month, day, and hour. this list
+     * will be used in roomsDAO to get a list<Rooms> that excludes room num that are from this list
+     */
+    @Query("SELECT ROOM_uid FROM reservations WHERE building LIKE :building AND " +
+            "day LIKE :day AND month LIKE :month AND hour LIKE :hour")
+    List<Integer> getReservationByDayMonthHour(String building ,int day, int month, int hour);
+
+    //get building Rooms that arent reserved at the specific time set
+
+    //get ALL reservations for that building, month, day, and hour
+        // you get a list of rooms num off of them
+    //query all rooms for that building, excluding the list of room num
+
 
 }
