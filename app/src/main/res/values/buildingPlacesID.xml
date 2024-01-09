@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<string-array name="buildingPlacesID">
+    <!--used to display specific buildings, paired together with having the name of the buildings
+    we want in the buildingActivity Spanning View options-->
+    <string-array name="buildingPlacesID">
     <item>ChIJrdw6sMusB4gR4jw375UJDZY</item>
     <item>ChIJJ9OGqMCsB4gRxMMAJ82zrcA</item>
     <item>ChIJq0BshbWsB4gRhDwjfHm5e8U</item>

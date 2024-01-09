@@ -14,6 +14,7 @@ public class Reservations {
     public int USER_uid;
 
 
+    //real name
     @ColumnInfo
     public String building;
 

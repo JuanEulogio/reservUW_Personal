@@ -18,11 +18,12 @@ public class reservationConfirmedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_reservation_confirmed);
 
         Intent receivedIntent = getIntent();
-        String roomNum = receivedIntent.getStringExtra("roomNum");
-        String buildingName = receivedIntent.getStringExtra("buildingName");
+        //String roomNum = receivedIntent.getStringExtra("roomNum");
+        //String buildingName = receivedIntent.getStringExtra("buildingName");
+        String textConfirm = receivedIntent.getStringExtra("textConfirm");
         TextView reservationLocation = findViewById(R.id.reservationLocation_textView);
 
-        reservationLocation.setText(roomNum + ", " + buildingName);
+        reservationLocation.setText(textConfirm);
 
         Button closeButton= findViewById(R.id.closeConfirmation_button);
         closeButton.setOnClickListener(new View.OnClickListener() {

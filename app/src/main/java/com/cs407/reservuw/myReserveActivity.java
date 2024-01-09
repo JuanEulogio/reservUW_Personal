@@ -49,8 +49,6 @@ public class myReserveActivity extends AppCompatActivity {
     LiveData<List<Reservations>> reservationQuery;
 
     LinearLayoutManager LinearLayoutManager;
-    Button showAllButton;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,27 +83,24 @@ public class myReserveActivity extends AppCompatActivity {
         });
 
 
-        //TODO: test code
+        //test code
         /**
-        Reservations newReservation1= new Reservations(0, uid, "TEST1: UnionSouth", 1, LocalDateTime.of(2023, 12, 21 , 13, LocalDateTime.now().getMinute(), LocalDateTime.now().getSecond()));
+        Reservations newReservation1= new Reservations(0, uid, "TEST1: UnionSouth", 1, 1, LocalDateTime.of(2023, 12, 21 , 13, LocalDateTime.now().getMinute()));
         Log.i(TAG, "TEST for our reservation day and month: " + newReservation1.day + " , " + newReservation1.month);
         myDatabase.reservationDAO().insertReservation(newReservation1);
 
-        Reservations newReservation2= new Reservations(0, uid, "TEST2: UnionSouth", 2, LocalDateTime.of(2023, 12, 22 , 14, LocalDateTime.now().getMinute(), LocalDateTime.now().getSecond()));
+        Reservations newReservation2= new Reservations(0, uid, "TEST2: UnionSouth", 2, 2, LocalDateTime.of(2023, 12, 22 , 14, LocalDateTime.now().getMinute()));
         myDatabase.reservationDAO().insertReservation(newReservation2);
 
-        Reservations newReservation3= new Reservations(0, uid, "TEST3: UnionSouth", 3, LocalDateTime.of(2023, 12, 23 , 3, LocalDateTime.now().getMinute(), LocalDateTime.now().getSecond()));
+        Reservations newReservation3= new Reservations(0, uid, "TEST3: UnionSouth", 3, 3,  LocalDateTime.of(2023, 12, 23 , 3, LocalDateTime.now().getMinute()));
         myDatabase.reservationDAO().insertReservation(newReservation3);
 
-        Reservations newReservation4= new Reservations(0, uid, "TEST4: UnionSouth", 4, LocalDateTime.of(2023, 11, 24 , 4, LocalDateTime.now().getMinute(), LocalDateTime.now().getSecond()));
+        Reservations newReservation4= new Reservations(0, uid, "TEST4: UnionSouth", 4, 4, LocalDateTime.of(2023, 11, 24 , 4, LocalDateTime.now().getMinute()));
         myDatabase.reservationDAO().insertReservation(newReservation4);
 
-        Reservations newReservation5= new Reservations(0, uid, "TEST5: UnionSouth", 5, LocalDateTime.of(2024, 1, 5 , 5, LocalDateTime.now().getMinute(), LocalDateTime.now().getSecond()));
+        Reservations newReservation5= new Reservations(0, uid, "TEST5: UnionSouth", 5, 5, LocalDateTime.of(2024, 1, 5 , 5, LocalDateTime.now().getMinute()));
         myDatabase.reservationDAO().insertReservation(newReservation5);
-        **/
-
-
-
+         **/
 
         //setting back button
         ImageButton backButton = findViewById(R.id.backButton);

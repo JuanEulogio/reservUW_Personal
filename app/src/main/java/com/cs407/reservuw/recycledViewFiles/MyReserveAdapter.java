@@ -56,7 +56,6 @@ public class MyReserveAdapter extends RecyclerView.Adapter<MyReserveViewHolder> 
         holder.buildingTextView.setText(reservation_item.get(position).getBuilding());
         holder.roomNumTextView.setText(reservation_item.get(position).getRoomNum());
 
-        //TODO: test this
         //took out ":ss" from pattern
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("'Day: 'MM-dd '| Time: 'KK:00 a", Locale.ENGLISH);
         holder.timeDateTextView.setText(reservation_item.get(position).getTimeDate().format(formatter));

@@ -28,11 +28,9 @@ public class MyReserveViewHolder extends RecyclerView.ViewHolder {
     public void bind(reservation_item reservation_item) {
         buildingTextView.setText(reservation_item.getBuilding());
 
-        //TODO: correct?
         roomNumTextView.setText(reservation_item.getRoomNum());
-        //TODO: test
-        //took out ":ss" from pattern
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("'Day: 'MM-dd '| Time: 'HH:mm:ss a", Locale.ENGLISH);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("'Day: 'MM-dd '| Time: 'HH:00 a", Locale.ENGLISH);
         String now = LocalDateTime.now().format(formatter);
 
         timeDateTextView.setText(now);

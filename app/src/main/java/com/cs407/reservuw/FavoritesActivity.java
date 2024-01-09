@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
@@ -19,6 +20,7 @@ import androidx.room.Room;
 import com.cs407.reservuw.recycledViewFiles.RoomAdapter;
 import com.cs407.reservuw.recycledViewFiles.Room_item;
 import com.cs407.reservuw.roomDB.FavoriteRoomDAO;
+import com.cs407.reservuw.roomDB.Reservations;
 import com.cs407.reservuw.roomDB.roomDAO;
 import com.cs407.reservuw.roomDB.Rooms;
 import com.cs407.reservuw.roomDB.uwRoomDatabase;
@@ -28,8 +30,10 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class FavoritesActivity extends AppCompatActivity {
@@ -90,7 +94,7 @@ public class FavoritesActivity extends AppCompatActivity {
             if (rooms != null) {
                 for (Rooms room : rooms) {
                     Log.d(TAG, "Building: " + room.getBuilding() + ", Room Number: " + room.getRoomNumber());
-                    Room_items.add(new Room_item("Room: " + Integer.toString(room.getRoomNumber()), room.getBuilding(), room.getUid()));
+                    Room_items.add(new Room_item("Room: " + room.getRoomNumber(), room.getBuilding(), room.getUid()));
                 }
             } else {
                 Log.d(TAG, "Rooms are null");
@@ -113,6 +117,35 @@ public class FavoritesActivity extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), RoomActivity.class);
                     intent.putExtra("roomNum", Room_item.getRoomNum());
                     intent.putExtra("roomUID", Room_item.getRoomUID());
+                    //TODO: we have to return month, day, and time if we want to do to roomActivity
+                    // Alternation:
+                    // - we loop here and get the latest available reservation to reserv for that room
+                    LocalDateTime nowAfterOneHour= LocalDateTime.now().plusHours(1);
+                    int hour= nowAfterOneHour.getHour();
+                    int month= nowAfterOneHour.getMonthValue();
+                    int day= nowAfterOneHour.plusHours(1).getDayOfMonth();
+                    Log.i(TAG, "starting values. month: " + month + ", day:" + day + ", hour: " + hour);
+                    Reservations reservations;
+                    for(int i = hour; i<= 23; i++){
+                        Log.i(TAG, "i: " + i);
+                        reservations= myDatabase.reservationDAO().ifReservationExistAtTime(Room_item.getRoomUID(), month, day, i);
+                        if(reservations== null){
+                            hour= i;
+                            break;
+                        }
+                        nowAfterOneHour= nowAfterOneHour.plusHours(1);
+                        month= nowAfterOneHour.plusHours(1).getMonthValue();
+                        day= nowAfterOneHour.getDayOfMonth();
+                        Log.i(TAG, "month: " + month + ", day:" + day + ", hour: " + hour);
+                        if(i==23){
+                            Log.i(TAG, "going next day");
+                            i= nowAfterOneHour.getHour()-1;
+                        }
+
+                    }
+                    intent.putExtra("month", month);
+                    intent.putExtra("day", day);
+                    intent.putExtra("hour", hour);
 
                     //used to get the name of the building. Used because it will be used in the room view
                     //if the user clicks one of the rooms favorites
@@ -120,7 +153,7 @@ public class FavoritesActivity extends AppCompatActivity {
                     placesClient = Places.createClient(getApplicationContext());
 
                     final String placeId = Room_item.getBuilding();
-                    Log.d(TAG, "Building: " + Room_item.getBuilding());
+                    Log.i(TAG, "Building: " + Room_item.getBuilding());
                     final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
                     final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
 

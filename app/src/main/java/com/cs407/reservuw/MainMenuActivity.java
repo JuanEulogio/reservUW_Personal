@@ -345,6 +345,7 @@ public class MainMenuActivity extends AppCompatActivity implements GoogleMap.OnM
 
         Intent intent= new Intent(this, BuildingActivity.class);
         intent.putExtra("ID", placeID);
+
         startActivity(intent);
 
         // Return false to indicate that we have not consumed the event and that we wish

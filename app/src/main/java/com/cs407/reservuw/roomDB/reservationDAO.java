@@ -25,6 +25,13 @@ public interface reservationDAO {
 
 
     /**
+     * used in favorites activity to loop and get the latest reservation time available
+     */
+    @Query("SELECT * FROM reservations WHERE ROOM_uid LIKE :roomUID AND month LIKE :month AND day LIKE :day AND hour LIKE :hour")
+    Reservations ifReservationExistAtTime(int roomUID,int month, int day, int hour);
+
+
+    /**
      * used to get a specific reservation that will be used to delete in myReserv
      */
     @Query("SELECT * FROM reservations WHERE uid LIKE :reservationUID LIMIT 1")
@@ -43,7 +50,7 @@ public interface reservationDAO {
      */
     @Query("SELECT ROOM_uid FROM reservations WHERE building LIKE :building AND " +
             "day LIKE :day AND month LIKE :month AND hour LIKE :hour")
-    List<Integer> getReservationByDayMonthHour(String building ,int day, int month, int hour);
+    List<Integer> getReservationByDayMonthHour(String building , int month ,int day,int hour);
 
     //get building Rooms that arent reserved at the specific time set
 

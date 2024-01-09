@@ -60,8 +60,9 @@ public class RoomActivity extends AppCompatActivity {
         String roomNum = receivedIntent.getStringExtra("roomNum");
         String buildingName = receivedIntent.getStringExtra("buildingName");
         int roomUID = receivedIntent.getIntExtra("roomUID", -1);
-        //TODO: get users wanted timeDate info
-        LocalDateTime timeDate;
+        int month= receivedIntent.getIntExtra("month", -1);
+        int day= receivedIntent.getIntExtra("day", -1);
+        int hour= receivedIntent.getIntExtra("hour", -1);
 
         Button cancelButton = findViewById(R.id.cancelButton);
         Button reserveButton = findViewById(R.id.reserveButton);
@@ -76,7 +77,9 @@ public class RoomActivity extends AppCompatActivity {
         }
 
         String roomInfoText = buildingName + ".\n"
-                + roomNum;
+                + roomNum + ".\n"
+                + "Date: " + month + "/" + day+ ".\n"
+                + "Time: " + hour;
 
         roomInfo.setText(roomInfoText);
 
@@ -102,12 +105,18 @@ public class RoomActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //TODO: input new reservation
-                //myDatabase.reservationDAO().insertReservation(new Reservations(0, uid, buildingName, roomNum, timeDate));
+                //removes the 'Room: ' sting that was used for recycled view
+                int roomNumber= Integer.parseInt(roomNum.substring(6,roomNum.length()));
+
+                //Log.i(TAG, "building name: " + buildingName + "room Number: "+ roomNumber + "room uid: "+ roomUID);
+                myDatabase.reservationDAO().insertReservation(new Reservations(0, uid, buildingName, roomNumber, roomUID, LocalDateTime.of(LocalDateTime.now().getYear(), month, day, hour, 0)));
 
                 //to reservation confirm activity
                 Intent intent = new Intent(getApplicationContext(), reservationConfirmedActivity.class);
-                intent.putExtra("roomNum", roomNum);
-                intent.putExtra("buildingName", buildingName);
+                //intent.putExtra("roomNum", roomNum);
+                //intent.putExtra("buildingName", buildingName);
+                intent.putExtra("textConfirm", roomInfoText);
+
                 startActivity(intent);
             }
         });

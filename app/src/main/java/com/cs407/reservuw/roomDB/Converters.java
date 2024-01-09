@@ -28,25 +28,5 @@ public class Converters {
             return date.toString();
         }
     }
-
-    /**
-    // for Array list of favorite user rooms
-    //TODO: make this works.
-    // source: https://stackoverflow.com/questions/49566388/how-to-store-and-retrieve-array-objects-using-room-in-android
-    // if fails, make another room database for the fav list
-    @TypeConverter
-    public static ArrayList<String> fromString(String value) {
-        Type listType = new TypeToken<ArrayList<String>>() {}.getType();
-        return new Gson().fromJson(String.valueOf(value), listType);
-    }
-
-    @TypeConverter
-    public static String fromArrayList(ArrayList<String> list) {
-        Gson gson = new Gson();
-        String json = gson.toJson(list);
-        return json;
-    }
-    **/
-
 }
 

@@ -16,8 +16,14 @@ public class Rooms {
     public int roomNumber;
 
 
-    //it will be the placeID from google places API
-    //NOTE: hard coded location with resource file.
+    //String will be the placeID from google places API.
+    //not the actual building name. The reason is to make our database match in real time with the
+    //building as the buildings being displayed into the MainMenuActivity Map. This makes our building filter picker
+    //in buildingActivity syncronize with the mainMenu buildings/Places.
+    //The only thing that is hard coded and to keep in mind is our rooms number and its building its tied to.
+    //Meaning, if you want to updated the buildings, you have to edit the buildingPlacesID.xml resource file AND the
+    //Rooms database, which this sql Entity file is apart of. You change this 'Rooms' Entity building
+    //String(which is some places ID) in a sql database maker.
     @ColumnInfo
     public String building;
 

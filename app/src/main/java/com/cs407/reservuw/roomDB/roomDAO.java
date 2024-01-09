@@ -11,12 +11,6 @@ import java.util.List;
 @Dao
 public interface roomDAO {
     /**
-     * query rooms by building. used when going to building view
-     */
-    @Query("SELECT * FROM Rooms WHERE building LIKE :building")
-    LiveData<List<Rooms>> getRoomsByBuilding(String building);
-
-    /**
      * query rooms by list of room_id. in order to get user favorite rooms
      */
     @Query("SELECT * FROM Rooms WHERE uid IN (:room_id)")
@@ -25,6 +19,7 @@ public interface roomDAO {
 
     /**
      * queries list<Rooms> from a building, that excludes that are from roomID list parameter
+     * (from getReservationByDayMonthHour)
      */
     @Query("SELECT * FROM Rooms WHERE building LIKE :building AND uid NOT IN (:roomID)")
     LiveData<List<Rooms>> getRoomsByBuildingMonthDayHour(String building, List<Integer> roomID);

@@ -8,11 +8,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,7 +25,6 @@ import android.widget.TextView;
 import com.cs407.reservuw.recycledViewFiles.RoomAdapter;
 import com.cs407.reservuw.recycledViewFiles.Room_item;
 import com.cs407.reservuw.roomDB.Rooms;
-import com.cs407.reservuw.roomDB.roomDAO;
 import com.cs407.reservuw.roomDB.uwRoomDatabase;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.libraries.places.api.Places;
@@ -30,31 +34,79 @@ import com.google.android.libraries.places.api.net.FetchPhotoRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import android.widget.NumberPicker;
 
-public class BuildingActivity extends AppCompatActivity {
+public class BuildingActivity extends AppCompatActivity   {
 
     private PlacesClient placesClient;
-    private String placeName;
+    public String placeName;
 
     ImageView buildingImage;
 
+    SharedPreferences sharedPreferences;
+    uwRoomDatabase myDatabase;
+    int uid;
+    RecyclerView recyclerView;
+    List<Room_item> roomItems = new ArrayList<>();
+    RoomAdapter adapter;
 
-    LocalDateTime reserveTime;
+    List<Integer> reservedRooms;
+    LiveData<List<Rooms>> roomQuery;
+
+
+    LinearLayoutManager LinearLayoutManager;
+
+
+    //hashmap to string arr for Spinner
+    String[] buildingNameList;
+
+    String selectedBuilding;
+    int selectedHour;
+    LocalDate selectedDate;
+
+
+    String placeId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building_view);
 
-
         TextView buildingViewTitle = findViewById(R.id.building_view_title);
 
         buildingImage= findViewById(R.id.buildingImageView);
+
+        myDatabase = Room.databaseBuilder(getApplicationContext(), uwRoomDatabase.class, "my room database")
+                .allowMainThreadQueries()
+                .build();
+        sharedPreferences =
+                getSharedPreferences ("com.cs407.reservuw", Context.MODE_PRIVATE);
+
+        uid = sharedPreferences.getInt ("uid", -1);
+
+        //recycleView initialize
+        recyclerView = findViewById(R.id.buildingRecyclerView);
+        adapter = new RoomAdapter(getApplicationContext(), roomItems);
+
+        LinearLayoutManager= new LinearLayoutManager(this);
+
+
+
+        //setting default selected building, date, and time
+        Intent receivedIntent = getIntent();
+        placeId = receivedIntent.getStringExtra("ID");
+
+        selectedBuilding= placeId;
+        //we want the next hour reservations
+        selectedHour = LocalTime.now().plusHours(1).getHour();
+        selectedDate= LocalDateTime.now().plusHours(1).toLocalDate();
 
 
 
@@ -67,14 +119,123 @@ public class BuildingActivity extends AppCompatActivity {
             }
         });
 
+        //TODO: keep?
+        //setting filter button
+        Button filterButton = findViewById(R.id.filterButton);
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //recycledViewCode(selectedBuilding, selectedDate.getMonthValue(), selectedDate.getDayOfMonth(), timePicker.getValue());
+            }
+        });
 
-        //Getting building name
+
+        //Getting building name, img, and full building names list for spinner
         placesClient = Places.createClient(this);
-        Intent receivedIntent = getIntent();
-        final String placeId = receivedIntent.getStringExtra("ID");
+        // Define the Places ID
+        Resources res = getResources();
+        final String[] placesID = res.getStringArray(R.array.buildingPlacesID);
 
-        final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
-        final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
+
+        //make a arr of placeFields
+        // Specify the fields to return.
+        List<List<Place.Field>> placeFields = new ArrayList<List<Place.Field>>(placesID.length);
+        for(int i=0; i< placesID.length; i++){
+            placeFields.add(Arrays.asList(Place.Field.NAME, Place.Field.ID, Place.Field.PHOTO_METADATAS));
+        }
+
+
+        //make a arr of requests
+        // Construct a request object, passing the place ID and fields array.
+        final FetchPlaceRequest[] requests = new FetchPlaceRequest[placesID.length];
+        for(int i=0; i< placesID.length; i++){
+            requests[i]= FetchPlaceRequest.newInstance(placesID[i], placeFields.get(i));
+        }
+
+
+
+        //TODO: get names, and intent building name+img
+        //loop to get names and if we see a place ID= the place ID we got sent a intent from,
+        //we display its name and display img
+        //TODO: still need spinner?
+        //Key= places ID
+        //Content= building name
+        HashMap<String, String> hashMapPlaceIDandName= new HashMap<String, String>();
+        for(int i=0; i< placesID.length; i++){
+            Log.i(TAG, "testing b4 placesClient");
+            //int finalI = i;
+            placesClient.fetchPlace(requests[i]).addOnSuccessListener((response) -> {
+                Place place = response.getPlace();
+
+                if(place.getId().compareTo(placeId)==0){
+
+                    //placeName= place.getName();
+
+                    //Log.i(TAG, "Got Place: " + placeName);
+
+
+                    //set building text Name
+                    //buildingViewTitle.setText(placeName);
+
+
+                    // Get the photo metadata.
+                    final List<PhotoMetadata> metadata = place.getPhotoMetadatas();
+                    if (metadata == null || metadata.isEmpty()) {
+                        Log.w(TAG, "No photo metadata.");
+                        return;
+                    }
+                    final PhotoMetadata photoMetadata = metadata.get(0);
+
+                    // Create a FetchPhotoRequest
+                    final FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
+                            .build();
+                    placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
+                        Bitmap bitmap = fetchPhotoResponse.getBitmap();
+                        buildingImage.setImageBitmap(bitmap);
+                    }).addOnFailureListener((exception) -> {
+                        if (exception instanceof ApiException) {
+                            final ApiException apiException = (ApiException) exception;
+                            Log.e(TAG, "Place not found: " + exception.getMessage());
+                            final int statusCode = apiException.getStatusCode();
+                            Log.i(TAG, "testing for image: failed");
+
+                            //Handle error with given status code.
+                        }
+                    });
+
+                }
+
+                //getting our list of building names
+                //TODO:
+                hashMapPlaceIDandName.put(place.getId(), place.getName());
+
+
+                Log.i(TAG, "Place= " + placeName);
+
+
+            }).addOnFailureListener((exception) -> {
+                if (exception instanceof ApiException) {
+                    final ApiException apiException = (ApiException) exception;
+                    Log.e(TAG, "Place not found: " + exception.getMessage());
+                    final int statusCode = apiException.getStatusCode();
+
+                    //NOTE: here Handle error with given status code.
+                }
+            });
+
+            Log.i(TAG, "edge of loopPlace= " + placeName);
+
+        }
+
+        //buildingNameList= hashMapPlaceIDandName.values().toArray(new String[0]);
+        //TODO: fix toString
+
+
+        //TODO: get placeName via having recycled code inside our client request for some reason
+        //Getting building name
+
+        final List<Place.Field> placeFields2 = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+        final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields2);
 
         placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
             Place place = response.getPlace();
@@ -82,8 +243,8 @@ public class BuildingActivity extends AppCompatActivity {
             placeName = place.getName();
             buildingViewTitle.setText(place.getName());
 
-            // Call the method to execute the rest of the code, containing the recycled view
-            executeRemainingCode(placeId);
+            //Call the method to execute the rest of the code, containing the recycled view
+            recycledViewCode(placeName, selectedDate.getMonthValue(), selectedDate.getDayOfMonth(), selectedHour);
         }).addOnFailureListener((exception) -> {
             if (exception instanceof ApiException) {
                 final ApiException apiException = (ApiException) exception;
@@ -92,90 +253,35 @@ public class BuildingActivity extends AppCompatActivity {
                 // NOTE: Handle error with given status code.
             }
         });
-
-
-        //Getting building image
-        Log.i(TAG, "Place ID intent received: " + placeId);
-        // Specify fields. Requests for photos must always have the PHOTO_METADATAS field.
-        final List<Place.Field> fields = Collections.singletonList(Place.Field.PHOTO_METADATAS);
-
-        // Get a Place object (this example uses fetchPlace(), but you can also use findCurrentPlace())
-        final FetchPlaceRequest placeRequest = FetchPlaceRequest.newInstance(placeId, fields);
-
-        placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
-            final Place place = response.getPlace();
-
-            // Get the photo metadata.
-            final List<PhotoMetadata> metadata = place.getPhotoMetadatas();
-            if (metadata == null || metadata.isEmpty()) {
-                Log.w(TAG, "No photo metadata.");
-                return;
-            }
-            final PhotoMetadata photoMetadata = metadata.get(0);
-
-            // Get the attribution text.
-                //final String attributions = photoMetadata.getAttributions();
-
-            // Create a FetchPhotoRequest.
-            final FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
-                    .build();
-            placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
-                Bitmap bitmap = fetchPhotoResponse.getBitmap();
-                buildingImage.setImageBitmap(bitmap);
-            }).addOnFailureListener((exception) -> {
-                if (exception instanceof ApiException) {
-                    final ApiException apiException = (ApiException) exception;
-                    Log.e(TAG, "Place not found: " + exception.getMessage());
-                    final int statusCode = apiException.getStatusCode();
-
-                        //Handle error with given status code.
-                }
-            });
-        });
-
-
-
-        //TODO: setting reservation button/clock
-
-
-        //TODO: set button to change building(we will change activity for this)
-
-
-
     }
 
 
-    private void executeRemainingCode(String placeId) {
-        uwRoomDatabase myDatabase = Room.databaseBuilder(getApplicationContext(), uwRoomDatabase.class, "my room database")
-                .build();
+
+    private void recycledViewCode(String place,int month, int day, int hour) {
+        //TODO: need? : clean up for liveData to show update list
+        roomItems.clear();
+
+        placeName= place;
+        reservedRooms= myDatabase.reservationDAO().getReservationByDayMonthHour(placeName, month, day, hour);
+        Log.i(TAG, "building Name: "  + placeName + ",month: "  + month + ",day: "  + day + ",hour: "  + hour);
+
+        Log.i(TAG, "list of integers: "  + reservedRooms.toString());
+        roomQuery = myDatabase.roomDAO().getRoomsByBuildingMonthDayHour(placeId, reservedRooms);
 
 
-
-        //get only by a specific time available
-        roomDAO myRoomDAO = myDatabase.roomDAO();
-        LiveData<List<Rooms>> roomsByBuilding = myRoomDAO.getRoomsByBuilding(placeId);
-
-        List<Room_item> Room_items = new ArrayList<>();
-
-        roomsByBuilding.observe(this, rooms -> {
+        roomQuery.observe(this, rooms -> {
             if (rooms != null) {
                 for (Rooms room : rooms) {
-                    Log.d(TAG, "Building: " + room.getBuilding() + ", Room Number: " + room.getRoomNumber() + "ROOM UID" + room.getUid());
-                    Room_items.add(new Room_item("Room " + Integer.toString(room.getRoomNumber()), placeName, room.getUid()));
+                    Log.i(TAG, "room num: " + room.roomNumber +", Building: " + placeName + ", Room uid: " + room.uid);
+                    roomItems.add(new Room_item("Room: "+ room.roomNumber, placeName, room.uid));
                 }
             } else {
-                Log.d(TAG, "Rooms are null");
+                Log.d(TAG, "reservations are null");
             }
 
-            Log.i(TAG, placeName);
-
             // Set up RecyclerView after fetching data
-            RecyclerView recyclerView = findViewById(R.id.buildingRecyclerView);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            RoomAdapter adapter = new RoomAdapter(getApplicationContext(), Room_items);
+            recyclerView.setLayoutManager(LinearLayoutManager);
             recyclerView.setAdapter(adapter);
-
-
 
 
             adapter.setOnItemClickListener(new RoomAdapter.OnItemClickListener() {
@@ -187,14 +293,20 @@ public class BuildingActivity extends AppCompatActivity {
                     // Access item details like item.getRoomNumber(), item.getPlaceName(), etc.
                     Intent intent = new Intent(getApplicationContext(), RoomActivity.class);
                     intent.putExtra("roomNum", Room_item.getRoomNum());
-                    intent.putExtra("buildingName", Room_item.getBuilding());
+                    //TODO: place name instead of via item
+                    intent.putExtra("buildingName", placeName);
                     intent.putExtra("roomUID", Room_item.getRoomUID());
-                    //TODO: send the localTimeDate for whatever is in the setted timeDate
+                    //TODO: send the localTimeDate for whatever is in the selected: month and day, and hour
+                    intent.putExtra("month", month);
+                    intent.putExtra("day", day);
+                    intent.putExtra("hour", hour);
+
                     startActivity(intent);
                 }
             });
+
         });
-
-
     }
+
+
 }
