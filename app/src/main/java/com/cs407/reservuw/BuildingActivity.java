@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import android.widget.NumberPicker;
+import android.widget.Toast;
 
 public class BuildingActivity extends AppCompatActivity   {
 
@@ -121,10 +122,13 @@ public class BuildingActivity extends AppCompatActivity   {
 
         //TODO: keep?
         //setting filter button
-        Button filterButton = findViewById(R.id.filterButton);
+        ImageButton filterButton = findViewById(R.id.filterButton);
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                CharSequence text = "filter ready to implement. Waiting on my creator to make it :)";
+                int duration = Toast.LENGTH_SHORT;
+                Toast.makeText(getApplicationContext(), text, duration).show();
                 //recycledViewCode(selectedBuilding, selectedDate.getMonthValue(), selectedDate.getDayOfMonth(), timePicker.getValue());
             }
         });
@@ -168,16 +172,6 @@ public class BuildingActivity extends AppCompatActivity   {
                 Place place = response.getPlace();
 
                 if(place.getId().compareTo(placeId)==0){
-
-                    //placeName= place.getName();
-
-                    //Log.i(TAG, "Got Place: " + placeName);
-
-
-                    //set building text Name
-                    //buildingViewTitle.setText(placeName);
-
-
                     // Get the photo metadata.
                     final List<PhotoMetadata> metadata = place.getPhotoMetadatas();
                     if (metadata == null || metadata.isEmpty()) {
@@ -231,7 +225,8 @@ public class BuildingActivity extends AppCompatActivity   {
         //TODO: fix toString
 
 
-        //TODO: get placeName via having recycled code inside our client request for some reason
+        //TODO: Can only get/store placeName via having recycled code inside our client request for some reason,
+        // else our own code goes after the client code, which is data that we recieve too late
         //Getting building name
 
         final List<Place.Field> placeFields2 = Arrays.asList(Place.Field.ID, Place.Field.NAME);

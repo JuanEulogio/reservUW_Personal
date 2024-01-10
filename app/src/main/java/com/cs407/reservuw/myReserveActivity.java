@@ -147,7 +147,12 @@ public class myReserveActivity extends AppCompatActivity {
                 if (reservations != null) {
                     for (Reservations reservation : reservations) {
                         Log.i(TAG, "reservation UID= " + reservation.getUid() +", Building: " + reservation.getBuilding() + ", Room Number: " + reservation.getRoomNum()+ ", timeDate: "+ reservation.getDateTime());
-                        reservationItems.add(new reservation_item(reservation.getBuilding(),"Room: " + reservation.getRoomNum(),  reservation.getDateTime(), reservation.getUid()));
+                        //deletes old reservations:
+                        if(LocalDateTime.of(LocalDateTime.now().getYear(), reservation.month, reservation.day, reservation.hour, 0).isBefore(LocalDateTime.now())){
+                            myDatabase.reservationDAO().deleteReservation(reservation);
+                        }else{
+                            reservationItems.add(new reservation_item(reservation.getBuilding(),"Room: " + reservation.getRoomNum(),  reservation.getDateTime(), reservation.getUid()));
+                        }
                     }
                 } else {
                     Log.d(TAG, "reservations are null");

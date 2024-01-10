@@ -30,6 +30,16 @@
         android:text="Favorite Rooms"
         android:textColor="@color/UWcolor"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Get the latest reservation for one of your favorite rooms: "
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:textSize="15dp"
+        android:gravity="center"
+        android:fontFamily="sans-serif-black"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/favoritesRecyclerView"
         android:layout_width="match_parent"
