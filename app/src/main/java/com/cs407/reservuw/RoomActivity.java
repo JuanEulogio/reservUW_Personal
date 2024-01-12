@@ -71,7 +71,7 @@ public class RoomActivity extends AppCompatActivity {
         //color the heart if current room is in the fav rooms for current user
         favRoom = myDatabase.FavoriteRoomDAO().getSpecificIfFavorite(uid, roomUID);
         if(favRoom!=null){
-            favButton.setColorFilter(0xFFFF0000, PorterDuff.Mode.SRC_IN);
+            favButton.setColorFilter(getColor(R.color.UWcolor), PorterDuff.Mode.SRC_IN);
             favButton.invalidate();
             isFav=true;
         }
@@ -131,15 +131,16 @@ public class RoomActivity extends AppCompatActivity {
 
                 if(isFav) {
                     Log.i(TAG, "deleted off of fav rooms");
-                    favButton.setColorFilter(0xFFAAAAAA, PorterDuff.Mode.SRC_IN);
+                    favButton.setColorFilter(getColor(R.color.dimGray), PorterDuff.Mode.SRC_IN);
                     favButton.invalidate();
                     myDatabase.FavoriteRoomDAO().deleteFav(favRoom);
                 } else {
                     Log.i(TAG, "insert");
-                    favButton.setColorFilter(0xFFFF0000, PorterDuff.Mode.SRC_IN);
+                    favButton.setColorFilter(getColor(R.color.UWcolor), PorterDuff.Mode.SRC_IN);
                     favButton.invalidate();
                     FavoriteRoom newFavRoom= new FavoriteRoom(0, uid, roomUID);
                     myDatabase.FavoriteRoomDAO().insertNewFav(newFavRoom);
+                    favRoom= newFavRoom;
                 }
                 isFav = !isFav;
             }

@@ -120,7 +120,7 @@ public class BuildingActivity extends AppCompatActivity   {
             }
         });
 
-        //TODO: keep?
+        //TODO: filter functionality button
         //setting filter button
         ImageButton filterButton = findViewById(R.id.filterButton);
         filterButton.setOnClickListener(new View.OnClickListener() {
@@ -158,10 +158,6 @@ public class BuildingActivity extends AppCompatActivity   {
 
 
 
-        //TODO: get names, and intent building name+img
-        //loop to get names and if we see a place ID= the place ID we got sent a intent from,
-        //we display its name and display img
-        //TODO: still need spinner?
         //Key= places ID
         //Content= building name
         HashMap<String, String> hashMapPlaceIDandName= new HashMap<String, String>();
@@ -199,13 +195,6 @@ public class BuildingActivity extends AppCompatActivity   {
 
                 }
 
-                //getting our list of building names
-                //TODO:
-                hashMapPlaceIDandName.put(place.getId(), place.getName());
-
-
-                Log.i(TAG, "Place= " + placeName);
-
 
             }).addOnFailureListener((exception) -> {
                 if (exception instanceof ApiException) {
@@ -221,14 +210,11 @@ public class BuildingActivity extends AppCompatActivity   {
 
         }
 
-        //buildingNameList= hashMapPlaceIDandName.values().toArray(new String[0]);
-        //TODO: fix toString
-
-
-        //TODO: Can only get/store placeName via having recycled code inside our client request for some reason,
+        //TODO: recycled code at the end of this becuase
+        // Can only get/store placeName via having recycled code inside our client request observe,
         // else our own code goes after the client code, which is data that we recieve too late
-        //Getting building name
 
+        //getting building name
         final List<Place.Field> placeFields2 = Arrays.asList(Place.Field.ID, Place.Field.NAME);
         final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields2);
 
@@ -245,7 +231,7 @@ public class BuildingActivity extends AppCompatActivity   {
                 final ApiException apiException = (ApiException) exception;
                 Log.e(TAG, "Place not found: " + exception.getMessage());
                 final int statusCode = apiException.getStatusCode();
-                // NOTE: Handle error with given status code.
+                // NOTE: Here we handle error with given status code.
             }
         });
     }
@@ -253,7 +239,7 @@ public class BuildingActivity extends AppCompatActivity   {
 
 
     private void recycledViewCode(String place,int month, int day, int hour) {
-        //TODO: need? : clean up for liveData to show update list
+        //clean up for liveData to show updated list
         roomItems.clear();
 
         placeName= place;
@@ -288,10 +274,8 @@ public class BuildingActivity extends AppCompatActivity   {
                     // Access item details like item.getRoomNumber(), item.getPlaceName(), etc.
                     Intent intent = new Intent(getApplicationContext(), RoomActivity.class);
                     intent.putExtra("roomNum", Room_item.getRoomNum());
-                    //TODO: place name instead of via item
                     intent.putExtra("buildingName", placeName);
                     intent.putExtra("roomUID", Room_item.getRoomUID());
-                    //TODO: send the localTimeDate for whatever is in the selected: month and day, and hour
                     intent.putExtra("month", month);
                     intent.putExtra("day", day);
                     intent.putExtra("hour", hour);

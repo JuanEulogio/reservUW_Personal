@@ -117,13 +117,12 @@ public class FavoritesActivity extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), RoomActivity.class);
                     intent.putExtra("roomNum", Room_item.getRoomNum());
                     intent.putExtra("roomUID", Room_item.getRoomUID());
-                    //TODO: we have to return month, day, and time if we want to do to roomActivity
-                    // Alternation:
-                    // - we loop here and get the latest available reservation to reserv for that room
                     LocalDateTime nowAfterOneHour= LocalDateTime.now().plusHours(1);
                     int hour= nowAfterOneHour.getHour();
                     int month= nowAfterOneHour.getMonthValue();
                     int day= nowAfterOneHour.plusHours(1).getDayOfMonth();
+
+                    //we loop here and get the latest available reservation to reserv for that room
                     Log.i(TAG, "starting values. month: " + month + ", day:" + day + ", hour: " + hour);
                     Reservations reservations;
                     for(int i = hour; i<= 23; i++){

@@ -33,7 +33,7 @@
 
     <TextView
         android:id="@+id/reservationLocation_textView"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-medium"
         android:textSize="20dp"
@@ -68,7 +68,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Close"
-        android:backgroundTint="@color/UWcolor"/>
+        android:backgroundTint="@color/UWcolor"
+        android:textColor="@color/white"/>
 
 
 </LinearLayout>

@@ -3,5 +3,8 @@
     <style name="Base.Theme.ReservUW" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <Room_item name="colorPrimary">@color/my_dark_primary</Room_item> -->
+        <item name="colorPrimary">@color/lightGray</item>
+        <item name="colorPrimaryDark">@color/UWcolor</item>
+        <item name="colorAccent">@color/UWcolor</item>
     </style>
 </resources>
