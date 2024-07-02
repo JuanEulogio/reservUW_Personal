@@ -54,35 +54,43 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MainMenuActivity extends AppCompatActivity implements GoogleMap.OnMarkerClickListener, OnMapReadyCallback {
 
 
+    private boolean locationPermissionGranted;
 
-    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1; // could've been any number!
+    //the chosen request id to check/request fine location permission
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
 
+    //this class provides us the ability to obtain users location
     private FusedLocationProviderClient fusedLocationClient;
 
+    private Location lastKnownLocation;
+
+    //failsafe location in the case of a rare location fetch error becuase of the system
+    private final LatLng defaultLocation = new LatLng(43.075404393142115, -89.40341145630344);
+
+    //non-null instance of the GoogleMap class that we use to update and customize the map
     private GoogleMap mMap;
 
-    private Location lastKnownLocation;
-    private CameraPosition cameraPosition;
-
-
-    // The entry point to the Places API.
+    // The entry point to the Places API
     private PlacesClient placesClient;
 
 
-    //grant permission
-    private boolean locationPermissionGranted;
-
-    private final LatLng defaultLocation = new LatLng(43.075404393142115, -89.40341145630344);
 
 
+    //TODO: need? fix?
+    private CameraPosition cameraPosition;
     //saving the map state
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         //gets login uid to make shared preference
         Intent intent= getIntent();
+
+        //TODO: why do we make userID catch a intent when we could fetch it the shared preference??
         int userID= intent.getIntExtra("uid", -1);
         Log.i(TAG, userID+ "");
 
@@ -94,21 +102,27 @@ public class MainMenuActivity extends AppCompatActivity implements GoogleMap.OnM
 
 
 
+        //renders main Menu
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
-        // Retrieve location and camera position from saved instance state.
+        // TODO: need? delete or fix?
+        //Retrieve location and camera position from saved instance state.
         if (savedInstanceState != null) {
             lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
             cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
 
-        // Construct a PlacesClient
-        Places.initialize(getApplicationContext(), "AIzaSyDYnEriKHXVSo50g7c_XJ7QlN3TjooL0QM");
+
+
+        // Construct a PlacesClient, using our API key from resources, in order to get our select
+        // uw madison buildings real time information
+        Places.initialize(getApplicationContext(), String.valueOf(R.string.PlacesClient_Key).toString());
         placesClient = Places.createClient(this);
 
+        //TODO: setting map and nav can be their own functions
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        // Sets GoogleMap fragment, and navigation
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -118,7 +132,8 @@ public class MainMenuActivity extends AppCompatActivity implements GoogleMap.OnM
         binding.setSelectedItemId(R.id.reserves);
         binding.setSelectedItemId(R.id.favorites);
 
-        // Perform item selected listener
+
+        // sets navigation onClick listeners
         binding.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -139,14 +154,17 @@ public class MainMenuActivity extends AppCompatActivity implements GoogleMap.OnM
 
     }
 
+    //navigation "favorites" button onClick function
     public void goToFav() {
         startActivity(new Intent(getApplicationContext(), FavoritesActivity.class));
     }
 
+    //navigation "reserves" button onClick function
     public void goToMyRes() {
         startActivity(new Intent(getApplicationContext(), myReserveActivity.class));
     }
 
+    //navigation "logout" button onClick function
     public void goToLogin(){
         //erase user session
         SharedPreferences sharedPreferences =
@@ -156,61 +174,33 @@ public class MainMenuActivity extends AppCompatActivity implements GoogleMap.OnM
         startActivity(new Intent(getApplicationContext(), LoginActivity.class));
     }
 
+
+
+    //when the map is ready to receive user input.
+    // It provides a non-null instance of the GoogleMap class
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap= googleMap;
-
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         // Turn on the My Location layer and the related control on the map.
         updateLocationUI();
 
-        // Get the current location of the device and set the position of the map.
+        // Gets the current location of the device and sets the users position on the map
         getDeviceLocation();
 
-        //places API
+        // uses PlacesAPI to display our reservable buildings location marker
         showCurrentPlace();
     }
 
-    private void getLocationPermission() {
-        /*
-         * Request location permission, so that we can get the location of the
-         * device. The result of the permission request is handled by a callback,
-         * onRequestPermissionsResult.
-         */
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            locationPermissionGranted = true;
-        } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-        }
-    }
 
-
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        locationPermissionGranted = false;
-        if (requestCode
-                == PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION) {// If request is cancelled, the result arrays are empty.
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                locationPermissionGranted = true;
-            }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-        updateLocationUI();
-    }
-
-
+    /**
+     * sets the location controls on the map. If the user has granted location permission,
+     * enable the My Location layer and the related control on the map,
+     * otherwise disable the layer and the control, and set the current location to null,
+     * and request for user location permission
+     */
     private void updateLocationUI() {
         if (mMap == null) {
             return;
@@ -231,6 +221,55 @@ public class MainMenuActivity extends AppCompatActivity implements GoogleMap.OnM
     }
 
 
+
+    private void getLocationPermission() {
+        /*
+         * Request location permission.
+         * The result of the permission request is handled by a callback, onRequestPermissionsResult().
+         */
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            locationPermissionGranted = true;
+
+            //TODO: issue: the first time permission is granted, the camera doesnt go to the users
+            // location
+            // fix: getDeviceLocation() should be called here?
+
+
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        }
+    }
+
+    //Callback function. Called after getLocationPermission() function gets a return back from
+    // the system permission request call
+    //TODO: cant i remove this? it seems redundent since locationPermissionGranted can be changed
+    // in getLocationPermission.
+    // this seems more useful if after a request, we do additional things in the background depending on the
+    // result
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        locationPermissionGranted = false;
+        if (requestCode == PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION) {
+            // If grantResults array is empty, its because the request was cancelled
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                locationPermissionGranted = true;
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+        updateLocationUI();
+    }
+
+
+
+
+
     private void getDeviceLocation() {
         /*
          * Get the best and most recent location of the device, which may be null in rare
@@ -245,6 +284,8 @@ public class MainMenuActivity extends AppCompatActivity implements GoogleMap.OnM
                         if (task.isSuccessful()) {
                             // Set the map's camera position to the current location of the device.
                             lastKnownLocation = task.getResult();
+
+                            //if location fetch was successful, we add a marker representing the user and move camera to it
                             if (lastKnownLocation != null) {
                                 mMap.addMarker(new MarkerOptions().position(new LatLng(lastKnownLocation.getLatitude(),
                                                 lastKnownLocation.getLongitude()))
@@ -276,7 +317,6 @@ public class MainMenuActivity extends AppCompatActivity implements GoogleMap.OnM
             return;
         }
 
-
         // Define the Places ID
         Resources res = getResources();
         final String[] placesID = res.getStringArray(R.array.buildingPlacesID);
@@ -302,15 +342,16 @@ public class MainMenuActivity extends AppCompatActivity implements GoogleMap.OnM
 
         //get our places and place marker
 
-        //make marker of array. used to set our markers tag= placeID
-        Marker marker[] = new Marker[placesID.length];
+        Marker marker[] = new Marker[placesID.length]; //used to set our markers tag= placeID,
+                                                        // in order for its onClick function to take user to
+                                                        // that specific building Activity
         for(int i=0; i< placesID.length; i++){
             int finalI = i;
             placesClient.fetchPlace(requests[i]).addOnSuccessListener((response) -> {
                 Place place = response.getPlace();
                 Log.i(TAG, "Place found: " + place.getName());
 
-                //add marker to building
+                //make and assign a marker to a building
                 marker[finalI] = mMap.addMarker(new MarkerOptions().position(place.getLatLng())
                         .icon(bitmapDescriptorFromVector(getApplicationContext(), R.drawable.ic_building_location))
                         .title(place.getName()));
@@ -325,7 +366,6 @@ public class MainMenuActivity extends AppCompatActivity implements GoogleMap.OnM
                     Log.e(TAG, "Place not found: " + exception.getMessage());
                     final int statusCode = apiException.getStatusCode();
 
-                    //NOTE: here Handle error with given status code.
                 }
             });
         }
@@ -333,30 +373,30 @@ public class MainMenuActivity extends AppCompatActivity implements GoogleMap.OnM
 
 
 
-    /** Called when the user clicks a marker. */
+    /** Called when the user clicks a building marker. */
     @Override
     public boolean onMarkerClick(final Marker marker) {
-        // Retrieve the data from the marker.
+        // Retrieve the buildings placeAPI's "placeID"
         String placeID = (String) marker.getTag();
-        Log.i(TAG, "Place clicked: " + placeID);
-        // if the thing clicked wasnt a building (the user)
+
+        // if the marker clicked was the user, leave
         if(placeID== null) return false;
 
 
         Intent intent= new Intent(this, BuildingActivity.class);
         intent.putExtra("ID", placeID);
-
         startActivity(intent);
 
         // Return false to indicate that we have not consumed the event and that we wish
         // for the default behavior to occur (which is for the camera to move such that the
-        // marker is centered and for the marker's info window to open, if it has one).
+        // marker is centered and for the marker's info window to open.)
         return false;
     }
 
 
 
-    //save the map state when the activity pauses
+    //TODO: works?? check
+    /**save the map state when the activity pauses*/
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (mMap != null) {
@@ -369,7 +409,7 @@ public class MainMenuActivity extends AppCompatActivity implements GoogleMap.OnM
 
 
 
-    //To make marker logo different
+    /**Helper function to make custom marker logo. Used for buildings markers*/
     private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
         Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
         vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());

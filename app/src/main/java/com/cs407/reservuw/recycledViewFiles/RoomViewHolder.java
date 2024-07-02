@@ -8,6 +8,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cs407.reservuw.R;
 
+/**
+ * The individual recycledView UI item that bridges the roomItem component to be used in recycledView
+ * made in RoomAdaptor
+ */
 public class RoomViewHolder extends RecyclerView.ViewHolder {
 
     TextView roomNumView;

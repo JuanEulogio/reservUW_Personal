@@ -40,7 +40,6 @@ public class FavoritesActivity extends AppCompatActivity {
 
     private PlacesClient placesClient;
 
-
     SharedPreferences sharedPreferences;
 
 
@@ -63,8 +62,8 @@ public class FavoritesActivity extends AppCompatActivity {
         });
 
 
+        //setting the recycled view list
         recycledViewCode();
-
     }
 
 
@@ -78,28 +77,31 @@ public class FavoritesActivity extends AppCompatActivity {
 
         int uid = sharedPreferences.getInt ("uid", -1);
 
+
+        //getting users favorite rooms. First by querying those rooms ids,
+        // then using the ids to query the room object
         FavoriteRoomDAO favoriteDAO = myDatabase.FavoriteRoomDAO();
-        roomDAO myRoomDAO = myDatabase.roomDAO();
-
-
         List<Integer> favRoomId = favoriteDAO.getRoomsByUserID(uid);
-        //test to see fav rooms for current user
-        Log.i(TAG, favRoomId.toString().substring(1, favRoomId.toString().length()-1));
 
-
+        roomDAO myRoomDAO = myDatabase.roomDAO();
         LiveData<List<Rooms>> roomsByRoomId = myRoomDAO.getRoomsByRoomID(favRoomId);
 
+        //setting the recycled views items
         List<Room_item> Room_items = new ArrayList<>();
         roomsByRoomId.observe(this, rooms -> {
             if (rooms != null) {
                 for (Rooms room : rooms) {
-                    Log.d(TAG, "Building: " + room.getBuilding() + ", Room Number: " + room.getRoomNumber());
+                    //TODO: try to see if you can fix that 'Room: ' issue
                     Room_items.add(new Room_item("Room: " + room.getRoomNumber(), room.getBuilding(), room.getUid()));
                 }
             } else {
                 Log.d(TAG, "Rooms are null");
             }
 
+            //TODO: in BuildingActivity this is a global var and initualized in onCrete.The only thing
+            // here is:
+            //            recyclerView.setLayoutManager(LinearLayoutManager);
+            //            recyclerView.setAdapter(adapter);
             // Set up RecyclerView after fetching data
             RecyclerView recyclerView = findViewById(R.id.favoritesRecyclerView);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -110,63 +112,69 @@ public class FavoritesActivity extends AppCompatActivity {
             adapter.setOnItemClickListener(new RoomAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(Room_item Room_item) {
-                    // Handle item click here
-                    // Example: You can open a new activity or perform any action
-                    // based on the clicked item.
-                    // Access item details like item.getRoomNumber(), item.getPlaceName(), etc.
+                    //takes you to RoomActivity to prepares a reservation at the latest
+                    //available reservable time
                     Intent intent = new Intent(getApplicationContext(), RoomActivity.class);
                     intent.putExtra("roomNum", Room_item.getRoomNum());
                     intent.putExtra("roomUID", Room_item.getRoomUID());
-                    LocalDateTime nowAfterOneHour= LocalDateTime.now().plusHours(1);
-                    int hour= nowAfterOneHour.getHour();
-                    int month= nowAfterOneHour.getMonthValue();
-                    int day= nowAfterOneHour.plusHours(1).getDayOfMonth();
 
-                    //we loop here and get the latest available reservation to reserv for that room
-                    Log.i(TAG, "starting values. month: " + month + ", day:" + day + ", hour: " + hour);
+                    //
+                    //TODO: make function that returns the month day and hour we want
+                    LocalDateTime oneHourAfterNow= LocalDateTime.now().plusHours(1);
+                    int hour= oneHourAfterNow.getHour();
+                    int month= oneHourAfterNow.getMonthValue();
+                    int day= oneHourAfterNow.plusHours(1).getDayOfMonth();
+
+                    //loop to find the latest available reservation time
                     Reservations reservations;
                     for(int i = hour; i<= 23; i++){
-                        Log.i(TAG, "i: " + i);
                         reservations= myDatabase.reservationDAO().ifReservationExistAtTime(Room_item.getRoomUID(), month, day, i);
+
                         if(reservations== null){
+                            //stop when we find a empty time slot
                             hour= i;
                             break;
                         }
-                        nowAfterOneHour= nowAfterOneHour.plusHours(1);
-                        month= nowAfterOneHour.plusHours(1).getMonthValue();
-                        day= nowAfterOneHour.getDayOfMonth();
-                        Log.i(TAG, "month: " + month + ", day:" + day + ", hour: " + hour);
+
+                        //goes to the next hour
+                        oneHourAfterNow= oneHourAfterNow.plusHours(1);
+                        month= oneHourAfterNow.plusHours(1).getMonthValue();
+                        day= oneHourAfterNow.getDayOfMonth();
+                        //TODO: ???? whats this
                         if(i==23){
-                            Log.i(TAG, "going next day");
-                            i= nowAfterOneHour.getHour()-1;
+                            //TODO: "Log.i(TAG, "going next day");"???
+                            // find the reason why i coded this and mention it here
+                            i= oneHourAfterNow.getHour()-1;
                         }
 
                     }
+                    //
+
                     intent.putExtra("month", month);
                     intent.putExtra("day", day);
                     intent.putExtra("hour", hour);
 
-                    //used to get the name of the building. Used because it will be used in the room view
-                    //if the user clicks one of the rooms favorites
-                    //Getting building name
+
+                    /*
+                     used to get the name of the building. Needed because it will be used in the roomActivity
+                     if the user clicks one of the rooms favorites
+                     */
                     placesClient = Places.createClient(getApplicationContext());
 
+                    //rooms are tied to building using the buildings placeID, placed by placesAPI
+                    //we use this placeId to fetch the places name
                     final String placeId = Room_item.getBuilding();
-                    Log.i(TAG, "Building: " + Room_item.getBuilding());
                     final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
                     final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
-
                     placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
                         Place place = response.getPlace();
                         String placeName= place.getName();
-                        Log.i(TAG, "intent building name is: " + placeName);
+
                         intent.putExtra("buildingName", placeName);
-                        //NOTE: dont move this. for some reason(i think it has to do with context)
-                        // the intent wont save if we make one here, or if we save string info here
-                        // to later use ourside this places add on success listener
+                        // //We implement startActivity here in order to use placeName
+                        // that comes from our fetch response
                         startActivity(intent);
 
-                        // Call the method to execute the rest of the code
                     }).addOnFailureListener((exception) -> {
                         if (exception instanceof ApiException) {
                             final ApiException apiException = (ApiException) exception;
@@ -175,7 +183,6 @@ public class FavoritesActivity extends AppCompatActivity {
                             // NOTE: Handle error with given status code.
                         }
                     });
-
 
                 }
             });

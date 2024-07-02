@@ -14,6 +14,9 @@ import com.cs407.reservuw.R;
 
 import java.util.List;
 
+/**
+ * The recycledView maker, using Room_item and RoomViewHolder
+ */
 public class RoomAdapter extends RecyclerView.Adapter<RoomViewHolder> {
 
     Context context;
@@ -51,6 +54,9 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomViewHolder> {
             }
         });
 
+        //TODO: is this the place that i can just say "Room: " + ____ so only the ui name display
+        // is effected?
+        // Seems like the origin
         holder.roomNumView.setText(Room_items.get(position).getRoomNum());
     }
 

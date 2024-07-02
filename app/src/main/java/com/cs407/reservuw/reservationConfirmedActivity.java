@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+//TODO: make the activity a modal instead?
 public class reservationConfirmedActivity extends AppCompatActivity {
 
     @Override
@@ -17,12 +18,11 @@ public class reservationConfirmedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reservation_confirmed);
 
+
         Intent receivedIntent = getIntent();
-        //String roomNum = receivedIntent.getStringExtra("roomNum");
-        //String buildingName = receivedIntent.getStringExtra("buildingName");
+        //TODO: better to call "textConfirm" into "confirmedReservationTime"
         String textConfirm = receivedIntent.getStringExtra("textConfirm");
         TextView reservationLocation = findViewById(R.id.reservationLocation_textView);
-
         reservationLocation.setText(textConfirm);
 
         Button closeButton= findViewById(R.id.closeConfirmation_button);

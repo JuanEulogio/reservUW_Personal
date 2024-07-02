@@ -54,62 +54,34 @@ public class BuildingActivity extends AppCompatActivity   {
     SharedPreferences sharedPreferences;
     uwRoomDatabase myDatabase;
     int uid;
+
+    //for recycled view
     RecyclerView recyclerView;
     List<Room_item> roomItems = new ArrayList<>();
     RoomAdapter adapter;
+    LinearLayoutManager LinearLayoutManager;
+
 
     List<Integer> reservedRooms;
     LiveData<List<Rooms>> roomQuery;
 
 
-    LinearLayoutManager LinearLayoutManager;
-
-
-    //hashmap to string arr for Spinner
-    String[] buildingNameList;
-
-    String selectedBuilding;
+    //TODO: whats the point of it? Seems like its for filtering time reservation
+    String selectedBuilding; //TODO: placeId and this are the same. Remove one
     int selectedHour;
     LocalDate selectedDate;
 
 
-    String placeId;
+    //catches mainMenu building marker intent
+    String placeId; //TODO: selectedBuilding and this are the same. Remove one. Probably this one
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //rendering activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building_view);
 
         TextView buildingViewTitle = findViewById(R.id.building_view_title);
-
-        buildingImage= findViewById(R.id.buildingImageView);
-
-        myDatabase = Room.databaseBuilder(getApplicationContext(), uwRoomDatabase.class, "my room database")
-                .allowMainThreadQueries()
-                .build();
-        sharedPreferences =
-                getSharedPreferences ("com.cs407.reservuw", Context.MODE_PRIVATE);
-
-        uid = sharedPreferences.getInt ("uid", -1);
-
-        //recycleView initialize
-        recyclerView = findViewById(R.id.buildingRecyclerView);
-        adapter = new RoomAdapter(getApplicationContext(), roomItems);
-
-        LinearLayoutManager= new LinearLayoutManager(this);
-
-
-
-        //setting default selected building, date, and time
-        Intent receivedIntent = getIntent();
-        placeId = receivedIntent.getStringExtra("ID");
-
-        selectedBuilding= placeId;
-        //we want the next hour reservations
-        selectedHour = LocalTime.now().plusHours(1).getHour();
-        selectedDate= LocalDateTime.now().plusHours(1).toLocalDate();
-
-
 
         //setting back button
         ImageButton backButton = findViewById(R.id.backButton);
@@ -119,6 +91,30 @@ public class BuildingActivity extends AppCompatActivity   {
                 finish();
             }
         });
+
+        buildingImage= findViewById(R.id.buildingImageView);
+
+
+
+        //recycleView initialize
+        recyclerView = findViewById(R.id.buildingRecyclerView);
+        adapter = new RoomAdapter(getApplicationContext(), roomItems);
+        LinearLayoutManager= new LinearLayoutManager(this);
+
+
+
+        //setting default selected building, date, and time filter
+        Intent receivedIntent = getIntent();
+        placeId = receivedIntent.getStringExtra("ID");
+
+        selectedBuilding= placeId; //TODO: fix/change
+
+        //by default, looks into reservable times in the next hour
+        selectedHour = LocalTime.now().plusHours(1).getHour();
+        selectedDate= LocalDateTime.now().plusHours(1).toLocalDate();
+
+
+
 
         //TODO: filter functionality button
         //setting filter button
@@ -130,44 +126,57 @@ public class BuildingActivity extends AppCompatActivity   {
                 int duration = Toast.LENGTH_SHORT;
                 Toast.makeText(getApplicationContext(), text, duration).show();
                 //recycledViewCode(selectedBuilding, selectedDate.getMonthValue(), selectedDate.getDayOfMonth(), timePicker.getValue());
+
+                //TODO: Activate modal for filter?
             }
         });
 
+        //setting database
+        myDatabase = Room.databaseBuilder(getApplicationContext(), uwRoomDatabase.class, "my room database")
+                .allowMainThreadQueries()
+                .build();
 
-        //Getting building name, img, and full building names list for spinner
-        placesClient = Places.createClient(this);
-        // Define the Places ID
+        //TODO: uid is never needed here. delete?
+        sharedPreferences = getSharedPreferences ("com.cs407.reservuw", Context.MODE_PRIVATE);
+        uid = sharedPreferences.getInt ("uid", -1);
+
+
+
+        //retrieving selectedBuilding image from placesAPI //TODO: this can be in its own function
+
+        placesClient = Places.createClient(this); //sets the entry point to the Places API
+
+        //first retrieves placesID from all possible reservable builidings
         Resources res = getResources();
         final String[] placesID = res.getStringArray(R.array.buildingPlacesID);
 
-
-        //make a arr of placeFields
-        // Specify the fields to return.
+        //array that specify the fields placesAPI will GET
         List<List<Place.Field>> placeFields = new ArrayList<List<Place.Field>>(placesID.length);
         for(int i=0; i< placesID.length; i++){
             placeFields.add(Arrays.asList(Place.Field.NAME, Place.Field.ID, Place.Field.PHOTO_METADATAS));
         }
 
-
-        //make a arr of requests
-        // Construct a request object, passing the place ID and fields array.
+        //make a arr of requests objects, used to send to places API
         final FetchPlaceRequest[] requests = new FetchPlaceRequest[placesID.length];
         for(int i=0; i< placesID.length; i++){
             requests[i]= FetchPlaceRequest.newInstance(placesID[i], placeFields.get(i));
         }
 
 
-
         //Key= places ID
         //Content= building name
-        HashMap<String, String> hashMapPlaceIDandName= new HashMap<String, String>();
+        HashMap<String, String> hashMapPlaceIDandName= new HashMap<String, String>(); //TODO: useless??
+
+        //iterated through each placesID (request) till place = the selectedBuilding
         for(int i=0; i< placesID.length; i++){
-            Log.i(TAG, "testing b4 placesClient");
-            //int finalI = i;
+
+            //sends fetch request
             placesClient.fetchPlace(requests[i]).addOnSuccessListener((response) -> {
                 Place place = response.getPlace();
 
+                //fetches selectedBuilding information when found
                 if(place.getId().compareTo(placeId)==0){
+
                     // Get the photo metadata.
                     final List<PhotoMetadata> metadata = place.getPhotoMetadatas();
                     if (metadata == null || metadata.isEmpty()) {
@@ -183,18 +192,16 @@ public class BuildingActivity extends AppCompatActivity   {
                         Bitmap bitmap = fetchPhotoResponse.getBitmap();
                         buildingImage.setImageBitmap(bitmap);
                     }).addOnFailureListener((exception) -> {
+
                         if (exception instanceof ApiException) {
                             final ApiException apiException = (ApiException) exception;
                             Log.e(TAG, "Place not found: " + exception.getMessage());
                             final int statusCode = apiException.getStatusCode();
-                            Log.i(TAG, "testing for image: failed");
-
                             //Handle error with given status code.
                         }
+
                     });
-
                 }
-
 
             }).addOnFailureListener((exception) -> {
                 if (exception instanceof ApiException) {
@@ -202,36 +209,36 @@ public class BuildingActivity extends AppCompatActivity   {
                     Log.e(TAG, "Place not found: " + exception.getMessage());
                     final int statusCode = apiException.getStatusCode();
 
-                    //NOTE: here Handle error with given status code.
+                    //here Handle error with given status code.
                 }
             });
-
-            Log.i(TAG, "edge of loopPlace= " + placeName);
-
         }
 
-        //TODO: recycled code at the end of this becuase
-        // Can only get/store placeName via having recycled code inside our client request observe,
-        // else our own code goes after the client code, which is data that we recieve too late
 
-        //getting building name
+        /*
+        * call recycledViewCode() during fetch becuase
+        * can only get/store placeName via having recycled code inside our client request observe
+        */
+        //fetch request to get building name //TODO: this can be in its own function
         final List<Place.Field> placeFields2 = Arrays.asList(Place.Field.ID, Place.Field.NAME);
         final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields2);
-
         placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
             Place place = response.getPlace();
-            Log.i(TAG, "Place found: " + place.getName());
+
+            //TODO: looks unnecessary. place.getName() seems fine during recycledViewCode implementation
             placeName = place.getName();
             buildingViewTitle.setText(place.getName());
 
             //Call the method to execute the rest of the code, containing the recycled view
+            //We implement recycled view here in order to use placeName that comes from our fetch respose
             recycledViewCode(placeName, selectedDate.getMonthValue(), selectedDate.getDayOfMonth(), selectedHour);
+
         }).addOnFailureListener((exception) -> {
             if (exception instanceof ApiException) {
                 final ApiException apiException = (ApiException) exception;
                 Log.e(TAG, "Place not found: " + exception.getMessage());
                 final int statusCode = apiException.getStatusCode();
-                // NOTE: Here we handle error with given status code.
+                //Here we handle error with given status code.
             }
         });
     }
@@ -242,18 +249,22 @@ public class BuildingActivity extends AppCompatActivity   {
         //clean up for liveData to show updated list
         roomItems.clear();
 
+        //TODO: looks unnecessary. parameter use seems fine
         placeName= place;
-        reservedRooms= myDatabase.reservationDAO().getReservationByDayMonthHour(placeName, month, day, hour);
-        Log.i(TAG, "building Name: "  + placeName + ",month: "  + month + ",day: "  + day + ",hour: "  + hour);
 
-        Log.i(TAG, "list of integers: "  + reservedRooms.toString());
+        //TODO: should we just init this variable here?
+        reservedRooms= myDatabase.reservationDAO().getReservationByDayMonthHour(placeName, month, day, hour);
+
+
+        //TODO: should we just init this variable here
         roomQuery = myDatabase.roomDAO().getRoomsByBuildingMonthDayHour(placeId, reservedRooms);
 
 
+        //makes recycledView items (roomItems) out of our queries
         roomQuery.observe(this, rooms -> {
             if (rooms != null) {
                 for (Rooms room : rooms) {
-                    Log.i(TAG, "room num: " + room.roomNumber +", Building: " + placeName + ", Room uid: " + room.uid);
+                    //TODO: I can change "Room: "+ room.roomNumber to just be room.roomNumbers?
                     roomItems.add(new Room_item("Room: "+ room.roomNumber, placeName, room.uid));
                 }
             } else {
@@ -264,18 +275,15 @@ public class BuildingActivity extends AppCompatActivity   {
             recyclerView.setLayoutManager(LinearLayoutManager);
             recyclerView.setAdapter(adapter);
 
-
+            //sets onClick for recycledView items
             adapter.setOnItemClickListener(new RoomAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(Room_item Room_item) {
-                    // Handle item click here
-                    // Example: You can open a new activity or perform any action
-                    // based on the clicked item.
-                    // Access item details like item.getRoomNumber(), item.getPlaceName(), etc.
                     Intent intent = new Intent(getApplicationContext(), RoomActivity.class);
                     intent.putExtra("roomNum", Room_item.getRoomNum());
                     intent.putExtra("buildingName", placeName);
                     intent.putExtra("roomUID", Room_item.getRoomUID());
+                    //TODO: need year here?
                     intent.putExtra("month", month);
                     intent.putExtra("day", day);
                     intent.putExtra("hour", hour);

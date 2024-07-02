@@ -33,28 +33,24 @@ public class RoomActivity extends AppCompatActivity {
     uwRoomDatabase myDatabase;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //rendering activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room_view);
+
+        //TODO: should i and how do i not do mainThreadQueries?
+        myDatabase = Room.databaseBuilder(getApplicationContext(), uwRoomDatabase.class, "my room database")
+                .allowMainThreadQueries()
+                .build();
 
        sharedPreferences =
                 getSharedPreferences ("com.cs407.reservuw", Context.MODE_PRIVATE);
 
-       myDatabase = Room.databaseBuilder(getApplicationContext(), uwRoomDatabase.class, "my room database")
-                .allowMainThreadQueries()
-                .build();
-
+       //TODO: doesnt seem needed because not use later unless i make it into a global variable
         int uid = sharedPreferences.getInt ("uid", -1);
 
 
-        //back button
-        ImageButton backButton = findViewById(R.id.backButton);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
 
+        //TODO: make function get -> setting all intents
         //Intents
         Intent receivedIntent = getIntent();
         String roomNum = receivedIntent.getStringExtra("roomNum");
@@ -63,19 +59,14 @@ public class RoomActivity extends AppCompatActivity {
         int month= receivedIntent.getIntExtra("month", -1);
         int day= receivedIntent.getIntExtra("day", -1);
         int hour= receivedIntent.getIntExtra("hour", -1);
+        //TODO: year addition here
 
-        Button cancelButton = findViewById(R.id.cancelButton);
-        Button reserveButton = findViewById(R.id.reserveButton);
+
+
+
+
+        //TODO: make function making all ui elements
         TextView roomInfo = findViewById(R.id.boxedTextView);
-        ImageButton favButton = findViewById(R.id.likeButton);
-        //color the heart if current room is in the fav rooms for current user
-        favRoom = myDatabase.FavoriteRoomDAO().getSpecificIfFavorite(uid, roomUID);
-        if(favRoom!=null){
-            favButton.setColorFilter(getColor(R.color.UWcolor), PorterDuff.Mode.SRC_IN);
-            favButton.invalidate();
-            isFav=true;
-        }
-
         String roomInfoText = buildingName + ".\n"
                 + roomNum + ".\n"
                 + "Date: " + month + "/" + day+ ".\n"
@@ -84,11 +75,26 @@ public class RoomActivity extends AppCompatActivity {
         roomInfo.setText(roomInfoText);
 
 
+        //TODO: Make function activate for each onclick.
+        //buttons
+
+        ImageButton backButton = findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        Button cancelButton = findViewById(R.id.cancelButton);
+
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO: shouldnt cancel button go back to the buildingView?
+                // The only reason not is because the person got to roomActivity because of favRooms
                 Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
+                //TODO: cant i use the global variable?
                 SharedPreferences sharedPreferences =
                         getSharedPreferences ("com.cs407.reservuw", Context.MODE_PRIVATE);
 
@@ -98,23 +104,18 @@ public class RoomActivity extends AppCompatActivity {
             }
         });
 
-
-
-
+        Button reserveButton = findViewById(R.id.reserveButton);
         reserveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: input new reservation
+                //TODO: should i parse it before sending it over?
                 //removes the 'Room: ' sting that was used for recycled view
                 int roomNumber= Integer.parseInt(roomNum.substring(6,roomNum.length()));
 
-                //Log.i(TAG, "building name: " + buildingName + "room Number: "+ roomNumber + "room uid: "+ roomUID);
                 myDatabase.reservationDAO().insertReservation(new Reservations(0, uid, buildingName, roomNumber, roomUID, LocalDateTime.of(LocalDateTime.now().getYear(), month, day, hour, 0)));
 
                 //to reservation confirm activity
                 Intent intent = new Intent(getApplicationContext(), reservationConfirmedActivity.class);
-                //intent.putExtra("roomNum", roomNum);
-                //intent.putExtra("buildingName", buildingName);
                 intent.putExtra("textConfirm", roomInfoText);
 
                 startActivity(intent);
@@ -123,27 +124,37 @@ public class RoomActivity extends AppCompatActivity {
 
 
 
-
+        ImageButton favButton = findViewById(R.id.likeButton);
+        //color the heart if current room is in the fav rooms for current user
+        favRoom = myDatabase.FavoriteRoomDAO().getSpecificIfFavorite(uid, roomUID);
+        //TODO: what specific info comes out of this query? having null seems vugue for if statement
+        if(favRoom!=null){
+            favButton.setColorFilter(getColor(R.color.UWcolor), PorterDuff.Mode.SRC_IN);
+            favButton.invalidate(); //calls system to update the icons color
+            isFav=true;
+        }
         favButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "favButton Pressed");
-
                 if(isFav) {
-                    Log.i(TAG, "deleted off of fav rooms");
+                    //removes from room favorites
                     favButton.setColorFilter(getColor(R.color.dimGray), PorterDuff.Mode.SRC_IN);
                     favButton.invalidate();
                     myDatabase.FavoriteRoomDAO().deleteFav(favRoom);
+
                 } else {
-                    Log.i(TAG, "insert");
+                    //adds into favorites
                     favButton.setColorFilter(getColor(R.color.UWcolor), PorterDuff.Mode.SRC_IN);
                     favButton.invalidate();
                     FavoriteRoom newFavRoom= new FavoriteRoom(0, uid, roomUID);
                     myDatabase.FavoriteRoomDAO().insertNewFav(newFavRoom);
                     favRoom= newFavRoom;
                 }
+
                 isFav = !isFav;
             }
         });
+
+
     }
 }

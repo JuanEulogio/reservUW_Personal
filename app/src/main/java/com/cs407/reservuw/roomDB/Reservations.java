@@ -45,6 +45,8 @@ public class Reservations {
         this.roomNum  = roomNum;
         this.ROOM_uid= ROOM_uid;
 
+        //TODO: implement year also
+        // Trace where year implementation is needed
         this.dateTime = dateTime;
         this.day= dateTime.getDayOfMonth();
         this.month= dateTime.getMonthValue();
