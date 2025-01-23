@@ -41,7 +41,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDYnEriKHXVSo50g7c_XJ7QlN3TjooL0QM" />
+            android:value="REDACTED" />
 
 
         <meta-data
